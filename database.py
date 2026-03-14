@@ -16,14 +16,15 @@ def init_db():
     cursor = conn.cursor()
 
     # SQL запрос для создания таблицы
+    # (рабочая температура, доза облучения, тип среды, минимальная прочность)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS materials (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
-            density REAL,
-            strength_initial REAL,
-            k_factor REAL,
-            temp_coef REAL
+            temperature REAL,                
+            irradiation_dose REAL,         
+            environment_type TEXT,         
+            min_required_strength REAL     
         )
     ''')
 
