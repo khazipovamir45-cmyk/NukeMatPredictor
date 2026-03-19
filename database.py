@@ -27,7 +27,9 @@ def init_db():
             temperature REAL,                
             irradiation_dose REAL,         
             environment_type TEXT,         
-            min_required_strength REAL     
+            min_required_strength REAL,
+            heat_capacity REAL,
+            thermal_conductivity REAL     
         )
     ''')
 
@@ -52,14 +54,16 @@ def load_data_from_csv(csv_file='nuclear_materials.csv'):
             try:
                 cursor.execute('''
                     INSERT OR IGNORE INTO materials 
-                    (name, temperature, irradiation_dose, environment_type, min_required_strength) 
-                    VALUES (?, ?, ?, ?, ?)
+                    (name, temperature, irradiation_dose, environment_type, min_required_strength, heat_capacity, thermal_conductivity) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     row['name'],
                     float(row['temperature']),
                     float(row['irradiation_dose']),
                     row['environment_type'],
-                    float(row['min_required_strength'])
+                    float(row['min_required_strength']),
+                    float(row['heat_capacity']),
+                    float(row['thermal_conductivity'])
                 ))
                 count += 1
             except Exception as e:
@@ -89,7 +93,9 @@ def get_all_materials():
             'temperature': material['temperature'],
             'irradiation_dose': material['irradiation_dose'],
             'environment_type': material['environment_type'],
-            'min_required_strength': material['min_required_strength']
+            'min_required_strength': material['min_required_strength'],
+            'heat_capacity': material['heat_capacity'],
+            'thermal_conductivity': material['thermal_conductivity']
         })
 
     return result
