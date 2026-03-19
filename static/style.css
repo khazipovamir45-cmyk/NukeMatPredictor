@@ -1,1 +1,325 @@
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background: #0b1a2f;
+    padding: 30px 20px;
+}
+
+/* МЕНЮ НАВИГАЦИИ */
+header {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+nav {
+    background: #0a1b30;
+    padding: 15px 60px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    border-bottom: 1px solid #1f3a57;
+    border-radius: 20px 20px 0 0;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo i {
+    color: #7bc9ff;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-menu a i {
+    font-size: 16px;
+    color: #7fa3cf;
+}
+
+.nav-menu a:hover {
+    background: #1e3a5f;
+    opacity: 1;
+}
+
+.nav-menu a.active {
+    background: #1e6df2;
+    color: white;
+}
+
+.nav-menu a.active i {
+    color: white;
+}
+
+/* ГЛАВНАЯ (HERO) */
+.hero {
+    background: linear-gradient(145deg, #0d1f33 0%, #132a41 100%);
+    padding: 50px 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.badge {
+    background: rgba(0, 191, 255, 0.15);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 40px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1px solid #2d5f8a;
+    margin-bottom: 25px;
+}
+
+.badge i {
+    margin-right: 8px;
+}
+
+h1 {
+    font-size: 58px;
+    font-weight: 700;
+    background: linear-gradient(to right, #fff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+    margin-bottom: 25px;
+    max-width: 800px;
+    color: white;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: white;
+    max-width: 650px;
+    margin-bottom: 35px;
+    line-height: 1.5;
+}
+
+.btn {
+    display: inline-block;
+    padding: 16px 42px;
+    border-radius: 60px;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #1e6df2;
+    color: white;
+    box-shadow: 0 10px 25px -5px #1e6df280;
+    border: 1px solid #63b3ff;
+}
+
+.btn-primary:hover {
+    background: #2980ff;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px #1e6df2b3;
+}
+
+/* Карточки "Для кого это" */
+.audience {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 50px 60px;
+    background: #0b1a2f;
+}
+
+.audience h2 {
+    font-size: 36px;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.audience-grid {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.audience-card {
+    background: rgba(18, 38, 62, 0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid #2a4970;
+    border-radius: 30px;
+    padding: 30px 25px;
+    flex: 1 1 250px;
+    box-shadow: 0 15px 30px -10px #00000055;
+    text-align: center;
+}
+
+.audience-icon {
+    background: #173a5e;
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    border: 1px solid #3c74a3;
+}
+
+.audience-icon i {
+    font-size: 28px;
+    color: white;
+}
+
+.audience-card h3 {
+    color: white;
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.audience-card p {
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+/* О ПРОЕКТЕ */
+.about {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 50px 60px;
+    background: #0c2138;
+}
+
+.about h2 {
+    font-size: 36px;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.about-content {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.about-text {
+    flex: 2;
+    min-width: 300px;
+}
+
+.about-text h3 {
+    font-size: 28px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.about-text p {
+    color: white;
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+    opacity: 0.95;
+}
+
+/* ПОДВАЛ */
+footer {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 30px 60px;
+    background: #0b1d31;
+    border-top: 1px solid #1d3d5e;
+    border-radius: 0 0 20px 20px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.team-links {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.team-links span {
+    color: white;
+    opacity: 0.9;
+}
+
+/* Адаптивность для телефонов */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        padding: 15px 20px;
+    }
+    
+    .nav-menu {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .nav-menu a {
+        justify-content: center;
+    }
+    
+    .hero, .audience, .about, footer {
+        padding: 30px 20px;
+    }
+    
+    h1 {
+        font-size: 36px;
+    }
+    
+    .audience-grid {
+        flex-direction: column;
+    }
+    
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .team-links {
+        justify-content: center;
+    }
+}
