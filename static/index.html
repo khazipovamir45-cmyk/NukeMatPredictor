@@ -34,6 +34,7 @@
                     } else {
                         console.log('Пропущена строка:', columns);
                 }}
+                points.sort((a, b) => a.x - b.x);
                 console.log('Загружено точек:', points.length);
             
                 const ctx=document.getElementById('myChart')
