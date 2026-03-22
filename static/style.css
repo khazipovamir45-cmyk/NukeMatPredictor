@@ -1,4 +1,4 @@
-
+/* Обнуление стилей (Reset CSS) */
 * {
     margin: 0;
     padding: 0;
@@ -6,12 +6,13 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Основные стили для страницы */
 body {
     background: #0b1a2f;
     padding: 30px 20px;
 }
 
-/* МЕНЮ НАВИГАЦИИ */
+/* Шапка и навигация */
 header {
     max-width: 1300px;
     margin: 0 auto;
@@ -27,6 +28,7 @@ nav {
     border-radius: 20px 20px 0 0;
 }
 
+/* Логотип */
 .logo {
     font-size: 20px;
     font-weight: 700;
@@ -40,6 +42,7 @@ nav {
     color: #7bc9ff;
 }
 
+/* Меню навигации */
 .nav-menu {
     display: flex;
     gap: 25px;
@@ -47,6 +50,7 @@ nav {
     list-style: none;
 }
 
+/* Ссылки в меню */
 .nav-menu a {
     color: white;
     text-decoration: none;
@@ -59,16 +63,19 @@ nav {
     gap: 8px;
 }
 
+/* Иконки в меню */
 .nav-menu a i {
     font-size: 16px;
     color: #7fa3cf;
 }
 
+/* При наведении на ссылку */
 .nav-menu a:hover {
     background: #1e3a5f;
     opacity: 1;
 }
 
+/* Активная страница */
 .nav-menu a.active {
     background: #1e6df2;
     color: white;
@@ -78,7 +85,7 @@ nav {
     color: white;
 }
 
-/* ГЛАВНАЯ (HERO) */
+/* Главная страница */
 .hero {
     background: linear-gradient(145deg, #0d1f33 0%, #132a41 100%);
     padding: 50px 60px;
@@ -86,6 +93,7 @@ nav {
     margin: 0 auto;
 }
 
+/* Бейдж (ярлычок "ядерная инженерия / МИФИ") */
 .badge {
     background: rgba(0, 191, 255, 0.15);
     color: white;
@@ -103,6 +111,7 @@ nav {
     margin-right: 8px;
 }
 
+/* Главный заголовок */
 h1 {
     font-size: 58px;
     font-weight: 700;
@@ -115,6 +124,7 @@ h1 {
     color: white;
 }
 
+/* Подзаголовок */
 .subtitle {
     font-size: 20px;
     color: white;
@@ -123,6 +133,7 @@ h1 {
     line-height: 1.5;
 }
 
+/* Кнопки */
 .btn {
     display: inline-block;
     padding: 16px 42px;
@@ -133,6 +144,7 @@ h1 {
     transition: all 0.3s ease;
 }
 
+/* Синяя кнопка */
 .btn-primary {
     background: #1e6df2;
     color: white;
@@ -162,6 +174,7 @@ h1 {
     text-align: center;
 }
 
+/* Сетка карточек */
 .audience-grid {
     display: flex;
     gap: 30px;
@@ -169,6 +182,7 @@ h1 {
     justify-content: center;
 }
 
+/* Одна карточка */
 .audience-card {
     background: rgba(18, 38, 62, 0.7);
     backdrop-filter: blur(4px);
@@ -180,6 +194,7 @@ h1 {
     text-align: center;
 }
 
+/* Иконка в карточке */
 .audience-icon {
     background: #173a5e;
     width: 60px;
@@ -210,7 +225,7 @@ h1 {
     opacity: 0.9;
 }
 
-/* О ПРОЕКТЕ */
+/* Секция "О проекте" */
 .about {
     max-width: 1300px;
     margin: 0 auto;
@@ -225,6 +240,7 @@ h1 {
     margin-bottom: 30px;
 }
 
+/* Содержимое секции о проекте */
 .about-content {
     display: flex;
     gap: 50px;
@@ -232,6 +248,7 @@ h1 {
     flex-wrap: wrap;
 }
 
+/* Текстовая часть */
 .about-text {
     flex: 2;
     min-width: 300px;
@@ -251,7 +268,7 @@ h1 {
     opacity: 0.95;
 }
 
-/* ПОДВАЛ */
+/* Подвал */
 footer {
     max-width: 1300px;
     margin: 0 auto;
@@ -280,6 +297,219 @@ footer {
 .team-links span {
     color: white;
     opacity: 0.9;
+}
+
+/* Стили для страницы формы */
+.form-page {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 50px 60px;
+    background: #0e233b;
+}
+
+.form-page h2 {
+    font-size: 36px;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Контейнер формы */
+.form-container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #112c48;
+    border-radius: 40px;
+    padding: 40px;
+    border: 1px solid #265177;
+    box-shadow: 0 20px 30px -15px #000;
+}
+
+/* Группа полей */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* Подпись к полю */
+.form-group label {
+    display: block;
+    color: white;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: #7bc9ff;
+}
+
+/* Обёртка для поля ввода */
+.input-wrapper {
+    background: #0c1f35;
+    border: 1px solid #2d5780;
+    border-radius: 50px;
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Иконка внутри поля */
+.input-wrapper i {
+    color: white;
+    margin-right: 12px;
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Поле ввода и выпадающий список */
+.input-wrapper input,
+.input-wrapper select {
+    background: transparent;
+    border: none;
+    padding: 14px 0;
+    width: 100%;
+    font-size: 16px;
+    color: white;
+    outline: none;
+}
+
+.input-wrapper select {
+    cursor: pointer;
+}
+
+.input-wrapper select option {
+    background: #0c1f35;
+    color: white;
+}
+
+/* Скрываем стрелочки у числовых полей */
+/* Для Chrome, Safari, Edge */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+
+/* Для Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* При фокусе на поле */
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    border-color: #1e6df2;
+}
+
+/* Блок дополнительных параметров */
+.additional-params {
+    background: #0a1f33;
+    border-radius: 30px;
+    padding: 20px;
+    margin: 30px 0 20px;
+    border: 1px solid #2d5580;
+}
+
+/* Заголовок блока дополнительных параметров */
+.params-header {
+    color: white;
+    font-size: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.params-header i {
+    color: #7bc9ff;
+}
+
+/* Список чипсов */
+.params-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* Один чипс (параметр) */
+.param-chip {
+    background: #173e60;
+    border: 1px solid #2d79b3;
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 14px;
+}
+
+/* Иконка слева в чипсе */
+.param-chip i:first-child {
+    color: #7bc9ff;
+}
+
+/* Иконка крестика справа */
+.param-chip i:last-child {
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 12px;
+    transition: opacity 0.3s;
+}
+
+.param-chip i:last-child:hover {
+    opacity: 1;
+}
+
+/* Кнопка добавления параметра */
+.add-param-btn {
+    background: rgba(30, 109, 242, 0.2);
+    border: 1px dashed #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-param-btn:hover {
+    background: rgba(30, 109, 242, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Кнопка отправки формы */
+.submit-btn {
+    width: 100%;
+    background: #1e6df2;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    border: 1px solid #5faaff;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #2980ff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px #1e6df280;
 }
 
 /* Адаптивность для телефонов */
@@ -321,5 +551,26 @@ footer {
     
     .team-links {
         justify-content: center;
+    }
+    
+    .form-page {
+        padding: 30px 20px;
+    }
+    
+    .form-container {
+        padding: 25px;
+    }
+    
+    .params-list {
+        flex-direction: column;
+    }
+    
+    .param-chip {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .form-page h2 {
+        font-size: 28px;
     }
 }
