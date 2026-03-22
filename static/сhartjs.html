@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyk</title>
+
+</head>
+<body>
+    <div style="width: 800px;">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script src="chart.js"></script>
+    <script>
+        fetch('../nuclear_materials.csv')
+            .then(response=>response.text())
+            .then(csvText =>{
+                const lines=csvText.trim().split('\n');
+                const headers=lines[0].split(',').map(h => h.trim());
+                const doseIndex=headers.indexOf('irradiation_dose');
+                const streIndex=headers.indexOf('min_required_strength');
+                
+                if (streIndex === -1 || doseIndex === -1) {
+                    alert(`Колонки не найдены. Доступны: ${headers.join(', ')}`);
+                    return;}
+                const points=[];
+                for(let i=1; i<lines.length; i++){
+                    const columns = lines[i].split(',');
+                    const x = parseFloat(columns[doseIndex]);
+                    const y = parseFloat(columns[streIndex]);
+                    
+                     if (!isNaN(x) && !isNaN(y)) {
+                        points.push({x, y});
+                    } else {
+                        console.log('Пропущена строка:', columns);
+                }}
+                points.sort((a, b) => a.x - b.x);
+                console.log('Загружено точек:', points.length);
+            
+                const ctx=document.getElementById('myChart')
+                new Chart(ctx,{type:'line',data:{datasets:[{label:"Прочность от дозы",data:points,borderWidth:1}]},options:{scales:{y:{beginAtZero:true,title:{display:true,text:'облучение'}},x:{type:'linear',beginAtZero:true,title:{display:true,text:'Доза'}}},responsive:true,animation:true,plugins:{tooltip:{enabled:true,callbacks:{title: function() { return ''; },label: function(context){return`(${context.parsed.x},${context.parsed.y})`}}}}}})
+            })
+    </script>
+
+    
+</body>
+</html>
