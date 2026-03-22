@@ -1,6 +1,6 @@
 from flask import Flask
 
-# Создаем экземпляр приложения
+# Создаем экземпляр сайта
 app = Flask(__name__)
 
 # Определяем простой маршрут
@@ -13,6 +13,6 @@ def hello():
 # def health():
 #     return 'OK', 200
 
-# Запускаем приложение
+# Запускаем сайт
 if __name__ == '__main__':
     app.run(debug=True)
