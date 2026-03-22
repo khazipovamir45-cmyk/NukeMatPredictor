@@ -16,3 +16,4 @@ def hello():
 # Запускаем приложение
 if __name__ == '__main__':
     app.run(debug=True)
+
