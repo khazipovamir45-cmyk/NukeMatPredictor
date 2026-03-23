@@ -92,7 +92,6 @@ def get_all_materials():
             'name': material['name'],
             'temperature': material['temperature'],
             'irradiation_dose': material['irradiation_dose'],
-            'environment_type': material['environment_type'],
             'min_required_strength': material['min_required_strength'],
             'heat_capacity': material['heat_capacity'],
             'thermal_conductivity': material['thermal_conductivity']
