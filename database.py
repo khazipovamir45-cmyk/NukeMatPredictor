@@ -25,8 +25,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
             temperature REAL,                
-            irradiation_dose REAL,         
-            environment_type TEXT,         
+            irradiation_dose REAL,                  
             min_required_strength REAL,
             heat_capacity REAL,
             thermal_conductivity REAL     
@@ -54,7 +53,7 @@ def load_data_from_csv(csv_file='nuclear_materials.csv'):
             try:
                 cursor.execute('''
                     INSERT OR IGNORE INTO materials 
-                    (name, temperature, irradiation_dose, environment_type, min_required_strength, heat_capacity, thermal_conductivity) 
+                    (name, temperature, irradiation_dose,  min_required_strength, heat_capacity, thermal_conductivity) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     row['name'],
