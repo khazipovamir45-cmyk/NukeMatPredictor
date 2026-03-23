@@ -1,1 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NukeMatPredictor - Рекомендации</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .results-page {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #0e233b;
+            padding: 50px 60px;
+        }
+        
+        .results-page h2 {
+            font-size: 36px;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .params-badge {
+            background: linear-gradient(135deg, #1e6df2 0%, #0f4c8a 100%);
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .params-badge i {
+            margin: 0 5px;
+            color: #7bc9ff;
+        }
+        
+        .materials-table-container {
+            background: #112c48;
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #265177;
+            overflow-x: auto;
+        }
+        
+        .materials-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+        
+        .materials-table th,
+        .materials-table td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #265177;
+            color: white;
+        }
+        
+        .materials-table th {
+            background: #0a1f33;
+            font-weight: 600;
+            color: #7bc9ff;
+        }
+        
+        .star-rating {
+            color: #f1c40f;
+            letter-spacing: 2px;
+        }
+        
+        .compat-percent {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .compat-percent.high { color: #2ecc71; }
+        .compat-percent.medium { color: #f39c12; }
+        .compat-percent.low { color: #e74c3c; }
+        
+        .chart-section {
+            background: #112c48;
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #265177;
+        }
+        
+        .chart-section h3 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-section h3 i {
+            color: #7bc9ff;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-icon {
+            background: #0a1f33;
+            border: 1px solid #2d5780;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-icon i {
+            color: #7bc9ff;
+        }
+        
+        .btn-icon:hover {
+            background: #1e3a5f;
+            transform: translateY(-2px);
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+            background: #112c48;
+            border-radius: 30px;
+        }
+        
+        .loading-spinner i {
+            font-size: 3rem;
+            color: #7bc9ff;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .results-page { padding: 30px 20px; }
+            .results-page h2 { font-size: 28px; }
+            .chart-container { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-atom"></i>
+                NMP
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="form.html">Начать расчёт</a></li>
+                <li><a href="index.html#about">О проекте</a></li>
+                <li><a href="#">База данных</a></li>
+                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
 
+    <main class="results-page">
+        <h2>Рекомендуемые материалы</h2>
+        
+        <div class="params-badge" id="paramsBadge"></div>
+
+        <div id="resultsContainer">
+            <div class="loading-spinner">
+                <i class="fas fa-atom fa-spin"></i>
+                <p>Загрузка...</p>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h3><i class="fas fa-chart-line"></i> Зависимость прочности от дозы облучения</h3>
+            <div class="chart-container">
+                <canvas id="doseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-icon" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Экспорт PDF</button>
+            <button class="btn-icon" id="shareBtn"><i class="fas fa-share-alt"></i> Поделиться</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 NukeMatPredictor · Команда МИФИ</p>
+            <div class="team-links">
+                <span>Амир (PL)</span>
+                <span>Богдан (BE)</span>
+                <span>Вероника (FE)</span>
+                <span>Соня (FE)</span>
+                <span>Саша (BA)</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const temperature = parseFloat(urlParams.get('temperature')) || 850;
+        const dose = parseFloat(urlParams.get('dose')) || 12.5;
+        const environment = urlParams.get('environment') || 'Вода';
+        const strength = parseFloat(urlParams.get('strength')) || 450;
+        
+        document.getElementById('paramsBadge').innerHTML = `
+            <i class="fas fa-thermometer-half"></i> ${temperature}°C &nbsp;·&nbsp;
+            <i class="fas fa-radiation"></i> ${dose} dpa &nbsp;·&nbsp;
+            <i class="fas fa-water"></i> ${environment} &nbsp;·&nbsp;
+            <i class="fas fa-hammer"></i> ≥${strength} МПа
+        `;
+        
+        const materials = [
+            { name: "Карбид кремния (SiC)", heat: 5, rad: 5, corr: 5, compat: 98, maxTemp: 1200, strength: 350, dose: 50 },
+            { name: "Сплав ЭК-181", heat: 4, rad: 3, corr: 3, compat: 91, maxTemp: 650, strength: 580, dose: 30 },
+            { name: "Сталь ЭП823-Ш", heat: 4, rad: 4, corr: 4, compat: 95, maxTemp: 700, strength: 600, dose: 35 },
+            { name: "Сталь 316L", heat: 4, rad: 3, corr: 3, compat: 85, maxTemp: 550, strength: 480, dose: 10 },
+            { name: "V-4Cr-4Ti", heat: 4, rad: 3, corr: 3, compat: 88, maxTemp: 700, strength: 460, dose: 30 },
+            { name: "Zircaloy-4", heat: 3, rad: 4, corr: 4, compat: 82, maxTemp: 340, strength: 335, dose: 8 },
+            { name: "Графит", heat: 5, rad: 4, corr: 4, compat: 87, maxTemp: 800, strength: 25, dose: 1 },
+            { name: "UO₂", heat: 5, rad: 5, corr: 4, compat: 93, maxTemp: 1200, strength: 150, dose: 60 },
+            { name: "B₄C", heat: 4, rad: 5, corr: 4, compat: 89, maxTemp: 800, strength: 200, dose: 25 },
+            { name: "Инконель 718", heat: 4, rad: 4, corr: 4, compat: 86, maxTemp: 650, strength: 1000, dose: 12 }
+        ];
+        
+        const sorted = materials.map(m => {
+            let score = 0;
+            if (m.maxTemp >= temperature) score += 35;
+            if (m.dose >= dose) score += 35;
+            if (m.strength >= strength) score += 30;
+            let compat = Math.min(98, Math.max(55, Math.round(score * 0.95)));
+            return { ...m, compat };
+        }).sort((a,b) => b.compat - a.compat);
+        
+        const top8 = sorted.slice(0, 8);
+        let tableHtml = `<div class="materials-table-container"><table class="materials-table"><thead><tr><th>Материал</th><th>Термостойкость</th><th>Радиационная стойкость</th><th>Коррозия</th><th>Совместимость</th></tr></thead><tbody>`;
+        
+        top8.forEach(m => {
+            const stars = (r) => '★'.repeat(r) + '☆'.repeat(5-r);
+            const compatClass = m.compat >= 85 ? 'high' : (m.compat >= 70 ? 'medium' : 'low');
+            tableHtml += `<tr><td><strong>${m.name}</strong></td><td><span class="star-rating">${stars(m.heat)}</span></td><td><span class="star-rating">${stars(m.rad)}</span></td><td><span class="star-rating">${stars(m.corr)}</span></td><td><span class="compat-percent ${compatClass}">${m.compat}%</span></td></tr>`;
+        });
+        
+        tableHtml += `</tbody></table></div>`;
+        document.getElementById('resultsContainer').innerHTML = tableHtml;
+        
+        // Загружаем данные для графика (как в chartjs.html, но прямо здесь)
+        fetch('../nuclear_materials.csv')
+            .then(response => response.text())
+            .then(csvText => {
+                const lines = csvText.trim().split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                const doseIndex = headers.indexOf('irradiation_dose');
+                const streIndex = headers.indexOf('min_required_strength');
+                
+                if (streIndex === -1 || doseIndex === -1) {
+                    console.error('Колонки не найдены');
+                    return;
+                }
+                
+                const points = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const columns = lines[i].split(',');
+                    const x = parseFloat(columns[doseIndex]);
+                    const y = parseFloat(columns[streIndex]);
+                    
+                    if (!isNaN(x) && !isNaN(y)) {
+                        points.push({x, y});
+                    }
+                }
+                
+                points.sort((a, b) => a.x - b.x);
+                console.log('Загружено точек:', points.length);
+                
+                const ctx = document.getElementById('doseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: "Прочность от дозы",
+                            data: points,
+                            borderColor: '#7bc9ff',
+                            backgroundColor: 'rgba(123, 201, 255, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#1e6df2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 1,
+                            tension: 0.2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Прочность (МПа)', color: 'white' },
+                                grid: { color: '#265177' },
+                                ticks: { color: 'white' }
+                            },
+                            x: {
+                                type: 'linear',
+                                beginAtZero: true,
+                                title: { display: true, text: 'Доза облучения (dpa)', color: 'white' },
+                                grid: { color: '#265177' },
+                                ticks: { color: 'white' }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `(${context.parsed.x}, ${context.parsed.y})`;
+                                    }
+                                }
+                            },
+                            legend: { labels: { color: 'white' } }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки CSV:', error);
+                document.getElementById('doseChart').parentElement.innerHTML = '<div style="color:#e74c3c; text-align:center; padding:50px;">Ошибка загрузки данных графика. Проверьте файл nuclear_materials.csv</div>';
+            });
+        
+        document.getElementById('exportPdfBtn').onclick = () => alert('Экспорт PDF: Ctrl+P');
+        document.getElementById('shareBtn').onclick = () => {
+            if (navigator.share) navigator.share({ title: 'NukeMatPredictor', url: location.href });
+            else navigator.clipboard.writeText(location.href).then(() => alert('Ссылка скопирована'));
+        };
+    </script>
+</body>
+</html>
