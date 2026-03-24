@@ -1,47 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nyk</title>
-
+    <title>График зависимости прочности от дозы облучения</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div style="width: 800px;">
+    <div style="width: 900px; margin: 20px auto;">
+        <div style="margin-bottom: 20px;">
+            <label for="materialSelect">Выберите материал: </label>
+            <select id="materialSelect" style="padding: 5px; width: 300px;">
+                <option value="">Загрузка материалов...</option>
+            </select>
+            <button id="loadBtn" style="padding: 5px 10px; margin-left: 10px;">Построить график</button>
+        </div>
+        
         <canvas id="myChart"></canvas>
     </div>
-    <script src="chart.js"></script>
-    <script>
-        fetch('../nuclear_materials.csv')
-            .then(response=>response.text())
-            .then(csvText =>{
-                const lines=csvText.trim().split('\n');
-                const headers=lines[0].split(',').map(h => h.trim());
-                const doseIndex=headers.indexOf('irradiation_dose');
-                const streIndex=headers.indexOf('min_required_strength');
-                
-                if (streIndex === -1 || doseIndex === -1) {
-                    alert(`Колонки не найдены. Доступны: ${headers.join(', ')}`);
-                    return;}
-                const points=[];
-                for(let i=1; i<lines.length; i++){
-                    const columns = lines[i].split(',');
-                    const x = parseFloat(columns[doseIndex]);
-                    const y = parseFloat(columns[streIndex]);
-                    
-                     if (!isNaN(x) && !isNaN(y)) {
-                        points.push({x, y});
-                    } else {
-                        console.log('Пропущена строка:', columns);
-                }}
-                points.sort((a, b) => a.x - b.x);
-                console.log('Загружено точек:', points.length);
-            
-                const ctx=document.getElementById('myChart')
-                new Chart(ctx,{type:'line',data:{datasets:[{label:"Прочность от дозы",data:points,borderWidth:1}]},options:{scales:{y:{beginAtZero:true,title:{display:true,text:'облучение'}},x:{type:'linear',beginAtZero:true,title:{display:true,text:'Доза'}}},responsive:true,animation:true,plugins:{tooltip:{enabled:true,callbacks:{title: function() { return ''; },label: function(context){return`(${context.parsed.x},${context.parsed.y})`}}}}}})
-            })
-    </script>
 
-    
+    <script>
+        let currentChart = null;
+        
+        // Загрузка списка материалов
+        async function loadMaterialsList() {
+            try {
+                const response = await fetch('/api/materials');
+                const materials = await response.json();
+                
+                const select = document.getElementById('materialSelect');
+                select.innerHTML = '<option value="">Выберите материал</option>';
+                
+                materials.forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.id;
+                    option.textContent = material.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('materialSelect').innerHTML = '<option value="">Ошибка загрузки</option>';
+            }
+        }
+        
+        // Построение графика
+        async function renderChart() {
+            const materialId = document.getElementById('materialSelect').value;
+            
+            if (!materialId) {
+                alert('Пожалуйста, выберите материал');
+                return;
+            }
+            
+            try {
+                // Получаем данные материала
+                const materialResponse = await fetch(`/api/material/${materialId}`);
+                const material = await materialResponse.json();
+                
+                // Получаем точки для графика
+                const chartResponse = await fetch(`/api/chart-data/${materialId}?min=0&max=100&points=100`);
+                const chartData = await chartResponse.json();
+                
+                // Уничтожаем старый график
+                if (currentChart) {
+                    currentChart.destroy();
+                }
+                
+                // Создаем новый график
+                const ctx = document.getElementById('myChart').getContext('2d');
+                currentChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: `${material.name} - зависимость прочности от дозы`,
+                                data: chartData.points,
+                                borderColor: 'rgb(75, 192, 192)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0,
+                                pointRadius: 0,
+                                pointHoverRadius: 5
+                            },
+                            {
+                                label: 'Исходная точка (экспериментальные данные)',
+                                data: [{
+                                    x: material.irradiation_dose,
+                                    y: material.min_required_strength
+                                }],
+                                borderColor: 'rgb(255, 99, 132)',
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                pointRadius: 8,
+                                pointHoverRadius: 10,
+                                type: 'scatter',
+                                showLine: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Минимальная прочность (MPa)',
+                                    font: { size: 14, weight: 'bold' }
+                                }
+                            },
+                            x: {
+                                type: 'linear',
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Доза облучения (dpa)',
+                                    font: { size: 14, weight: 'bold' }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.dataset.label === 'Исходная точка (экспериментальные данные)') {
+                                            return `Эксперимент: (${context.parsed.x.toFixed(1)} dpa, ${context.parsed.y.toFixed(0)} MPa)`;
+                                        }
+                                        return `Доза: ${context.parsed.x.toFixed(1)} dpa\nПрочность: ${context.parsed.y.toFixed(0)} MPa`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: { size: 12 }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при загрузке данных материала');
+            }
+        }
+        
+        // Загружаем список материалов
+        loadMaterialsList();
+        
+        // Обработчики
+        document.getElementById('loadBtn').addEventListener('click', renderChart);
+        document.getElementById('materialSelect').addEventListener('change', function() {
+            if (this.value) {
+                renderChart();
+            }
+        });
+    </script>
 </body>
 </html>
