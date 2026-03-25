@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NukeMatPredictor - Рекомендации</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    <link rel="stylesheet" href="../static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
+        /* Дополнительные стили только для страницы результатов */
         .results-page {
             max-width: 1300px;
             margin: 0 auto;
@@ -54,12 +54,12 @@
         .materials-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 700px;
+            min-width: 600px;
         }
         
         .materials-table th,
         .materials-table td {
-            padding: 15px 12px;
+            padding: 18px 15px;
             text-align: left;
             border-bottom: 1px solid #265177;
             color: white;
@@ -69,47 +69,69 @@
             background: #0a1f33;
             font-weight: 600;
             color: #7bc9ff;
+            font-size: 1rem;
         }
         
-        .star-rating {
-            color: #f1c40f;
-            letter-spacing: 2px;
+        .materials-table tr:last-child td {
+            border-bottom: none;
         }
         
-        .compat-percent {
-            font-weight: 700;
-            font-size: 1.1rem;
+        .status-icon {
+            font-size: 1.2rem;
+            width: 45px;
+            text-align: center;
         }
         
-        .compat-percent.high { color: #2ecc71; }
-        .compat-percent.medium { color: #f39c12; }
-        .compat-percent.low { color: #e74c3c; }
+        .status-best {
+            color: #6fcf97;
+        }
         
-        .chart-section {
+        .status-good {
+            color: #f2c94c;
+        }
+        
+        .status-warning {
+            color: #eb5757;
+        }
+        
+        .compat-text {
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .compat-text.best {
+            color: #6fcf97;
+        }
+        
+        .compat-text.good {
+            color: #f2c94c;
+        }
+        
+        .compat-text.warning {
+            color: #eb5757;
+        }
+        
+        .material-name {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #e0e0e0;
+        }
+        
+        .chart-iframe-container {
             background: #112c48;
             border-radius: 30px;
-            padding: 25px;
+            padding: 0;
             margin-bottom: 30px;
             border: 1px solid #265177;
+            overflow: hidden;
         }
         
-        .chart-section h3 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .chart-section h3 i {
-            color: #7bc9ff;
-        }
-        
-        .chart-container {
+        .chart-iframe {
             width: 100%;
-            height: 500px;
-            position: relative;
+            height: 550px;
+            border: none;
+            display: block;
         }
         
         .action-buttons {
@@ -129,7 +151,7 @@
             align-items: center;
             gap: 10px;
             color: white;
-            font-weight: 600;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
         
@@ -161,9 +183,31 @@
         }
         
         @media (max-width: 768px) {
-            .results-page { padding: 30px 20px; }
-            .results-page h2 { font-size: 28px; }
-            .chart-container { height: 350px; }
+            .results-page {
+                padding: 30px 20px;
+            }
+            
+            .results-page h2 {
+                font-size: 28px;
+            }
+            
+            .chart-iframe {
+                height: 400px;
+            }
+            
+            .materials-table th,
+            .materials-table td {
+                padding: 12px 10px;
+            }
+            
+            .status-icon {
+                font-size: 1rem;
+                width: 35px;
+            }
+            
+            .compat-text {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
@@ -175,11 +219,11 @@
                 NMP
             </div>
             <ul class="nav-menu">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="form.html">Начать расчёт</a></li>
-                <li><a href="index.html#about">О проекте</a></li>
-                <li><a href="#">База данных</a></li>
-                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git">GitHub</a></li>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/form"><i class="fas fa-calculator"></i> Начать расчёт</a></li>
+                <li><a href="/#about"><i class="fas fa-info-circle"></i> О проекте</a></li>
+                <li><a href="#"><i class="fas fa-database"></i> База данных</a></li>
+                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git"><i class="fab fa-github"></i> GitHub</a></li>
             </ul>
         </nav>
     </header>
@@ -196,11 +240,8 @@
             </div>
         </div>
 
-        <div class="chart-section">
-            <h3><i class="fas fa-chart-line"></i> Зависимость прочности от дозы облучения</h3>
-            <div class="chart-container">
-                <canvas id="doseChart"></canvas>
-            </div>
+        <div class="chart-iframe-container">
+            <iframe class="chart-iframe" src="/static/chartjs.html" title="График зависимости прочности от дозы облучения"></iframe>
         </div>
 
         <div class="action-buttons">
@@ -223,8 +264,6 @@
     </footer>
 
     <script>
-        let currentChart = null;
-        
         // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         const temperature = parseFloat(urlParams.get('temperature')) || 850;
@@ -239,187 +278,104 @@
             <i class="fas fa-hammer"></i> ≥${strength} МПа
         `;
         
-        // Загрузка материалов из базы данных через API
-        async function loadMaterialsFromDB() {
-            try {
-                const response = await fetch('/api/materials');
-                const dbMaterials = await response.json();
-                return dbMaterials;
-            } catch (error) {
-                console.error('Ошибка загрузки из БД:', error);
-                // Fallback на статические данные если БД недоступна
-                return [
-                    { id: 1, name: "Карбид кремния (SiC)", maxTemp: 1200, strength: 350, dose: 50 },
-                    { id: 2, name: "Сплав ЭК-181", maxTemp: 650, strength: 580, dose: 30 },
-                    { id: 3, name: "Сталь ЭП823-Ш", maxTemp: 700, strength: 600, dose: 35 },
-                    { id: 4, name: "Сталь 316L", maxTemp: 550, strength: 480, dose: 10 },
-                    { id: 5, name: "V-4Cr-4Ti", maxTemp: 700, strength: 460, dose: 30 },
-                    { id: 6, name: "Zircaloy-4", maxTemp: 340, strength: 335, dose: 8 },
-                    { id: 7, name: "Графит", maxTemp: 800, strength: 25, dose: 1 },
-                    { id: 8, name: "UO₂", maxTemp: 1200, strength: 150, dose: 60 },
-                    { id: 9, name: "B₄C", maxTemp: 800, strength: 200, dose: 25 },
-                    { id: 10, name: "Инконель 718", maxTemp: 650, strength: 1000, dose: 12 }
-                ];
-            }
+        // База данных материалов
+        const materialsDB = [
+            { id: 1, name: "Карбид кремния (SiC)", maxTemp: 1200, strength: 350, dose: 50 },
+            { id: 2, name: "Сплав ЭК-181", maxTemp: 650, strength: 580, dose: 30 },
+            { id: 3, name: "Сталь ЭП823-Ш", maxTemp: 700, strength: 600, dose: 35 },
+            { id: 4, name: "Сталь 316L", maxTemp: 550, strength: 480, dose: 10 },
+            { id: 5, name: "V-4Cr-4Ti", maxTemp: 700, strength: 460, dose: 30 },
+            { id: 6, name: "Zircaloy-4", maxTemp: 340, strength: 335, dose: 8 },
+            { id: 7, name: "Графит", maxTemp: 800, strength: 25, dose: 1 },
+            { id: 8, name: "UO₂", maxTemp: 1200, strength: 150, dose: 60 },
+            { id: 9, name: "B₄C", maxTemp: 800, strength: 200, dose: 25 },
+            { id: 10, name: "Инконель 718", maxTemp: 650, strength: 1000, dose: 12 }
+        ];
+        
+        // Функция расчета очков
+        function calculateScore(material, temp, doseReq, strengthReq) {
+            let score = 0;
+            if (material.maxTemp >= temp) score += 35;
+            if (material.dose >= doseReq) score += 35;
+            if (material.strength >= strengthReq) score += 30;
+            return score;
         }
         
-        // Загрузка полных данных материала по ID
-        async function loadMaterialDetails(materialId) {
-            try {
-                const response = await fetch(`/api/material/${materialId}`);
-                const material = await response.json();
-                return material;
-            } catch (error) {
-                console.error('Ошибка загрузки деталей материала:', error);
-                return null;
-            }
-        }
-        
-        // Генерация точек для графика по формуле
-        function generateLinePoints(material, doseMin = 0, doseMax = 100, pointsCount = 100) {
-            const baseStrength = material.min_required_strength;
-            const baseDose = material.irradiation_dose;
-            const doseCoef = material.dose_coef;
-            
-            const points = [];
-            const step = (doseMax - doseMin) / pointsCount;
-            
-            for (let i = 0; i <= pointsCount; i++) {
-                const doseVal = doseMin + i * step;
-                let strengthVal = baseStrength + doseCoef * (doseVal - baseDose);
-                strengthVal = Math.max(0, strengthVal);
-                points.push({ x: parseFloat(doseVal.toFixed(2)), y: parseFloat(strengthVal.toFixed(2)) });
-            }
-            
-            return points;
-        }
-        
-        // Построение графика
-        async function renderChart(materialId) {
-            const ctx = document.getElementById('doseChart').getContext('2d');
-            
-            if (currentChart) {
-                currentChart.destroy();
-            }
-            
-            try {
-                const material = await loadMaterialDetails(materialId);
-                
-                if (!material) {
-                    throw new Error('Материал не найден');
-                }
-                
-                const points = generateLinePoints(material, 0, 100, 100);
-                
-                currentChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        datasets: [
-                            {
-                                label: `${material.name} - прочность от дозы`,
-                                data: points,
-                                borderColor: '#7bc9ff',
-                                backgroundColor: 'rgba(123, 201, 255, 0.1)',
-                                borderWidth: 2,
-                                pointRadius: 0,
-                                pointHoverRadius: 5,
-                                tension: 0,
-                                fill: true
-                            },
-                            {
-                                label: 'Исходная точка',
-                                data: [{ x: material.irradiation_dose, y: material.min_required_strength }],
-                                borderColor: '#ff6b6b',
-                                backgroundColor: '#ff6b6b',
-                                pointRadius: 8,
-                                pointHoverRadius: 10,
-                                type: 'scatter',
-                                showLine: false
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'Прочность (МПа)', color: 'white' },
-                                grid: { color: '#265177' },
-                                ticks: { color: 'white' }
-                            },
-                            x: {
-                                type: 'linear',
-                                beginAtZero: true,
-                                title: { display: true, text: 'Доза облучения (dpa)', color: 'white' },
-                                grid: { color: '#265177' },
-                                ticks: { color: 'white' }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                enabled: true,
-                                callbacks: {
-                                    label: function(context) {
-                                        if (context.dataset.label === 'Исходная точка') {
-                                            return `Эксперимент: (${context.parsed.x.toFixed(1)} dpa, ${context.parsed.y.toFixed(0)} МПа)`;
-                                        }
-                                        return `Доза: ${context.parsed.x.toFixed(1)} dpa\nПрочность: ${context.parsed.y.toFixed(0)} МПа`;
-                                    }
-                                }
-                            },
-                            legend: { 
-                                labels: { color: 'white' }
-                            }
-                        }
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Ошибка построения графика:', error);
-                ctx.canvas.parentElement.innerHTML = '<div style="color:#e74c3c; text-align:center; padding:50px;">Ошибка загрузки данных графика. Проверьте подключение к БД</div>';
+        // Функция определения статуса
+        function getStatus(index) {
+            if (index === 0) {
+                return {  
+                    iconClass: 'status-best', 
+                    text: ' ★Лучший выбор',
+                    textClass: 'best'
+                };
+            } else if (index === 1) {
+                return { 
+                    iconClass: 'status-good', 
+                    text: '✓Подходит',
+                    textClass: 'good'
+                };
+            } else {
+                return { 
+                    iconClass: 'status-warning', 
+                    text: '✗Не рекомендуется',
+                    textClass: 'warning'
+                };
             }
         }
         
         // Основная функция
-        async function init() {
-            const materialsList = await loadMaterialsFromDB();
+        function init() {
+            // Расчет очков и сортировка
+            const materialsWithScore = materialsDB.map(m => ({
+                ...m,
+                score: calculateScore(m, temperature, dose, strength)
+            })).sort((a, b) => b.score - a.score);
             
-            // Сортировка и расчет совместимости
-            const sorted = materialsList.map(m => {
-                let score = 0;
-                if (m.maxTemp >= temperature) score += 35;
-                if (m.dose >= dose) score += 35;
-                if (m.strength >= strength) score += 30;
-                let compat = Math.min(98, Math.max(55, Math.round(score * 0.95)));
-                return { ...m, compat, heat: 4, rad: 4, corr: 4 };
-            }).sort((a, b) => b.compat - a.compat);
-            
-            const top8 = sorted.slice(0, 8);
+            // Берем только 3 лучших
+            const top3 = materialsWithScore.slice(0, 3);
             
             // Генерация таблицы
-            let tableHtml = `<div class="materials-table-container"><table class="materials-table"><thead><tr><th>Материал</th><th>Термостойкость</th><th>Радиационная стойкость</th><th>Коррозия</th><th>Совместимость</th></tr></thead><tbody>`;
+            let tableHtml = `
+                <div class="materials-table-container">
+                    <table class="materials-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px"></th>
+                                <th>Материал</th>
+                                <th>Макс. температура</th>
+                                <th>Доза облучения</th>
+                                <th>Прочность</th>
+                                <th>Совместимость</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
             
-            top8.forEach(m => {
-                const stars = (r) => '★'.repeat(r) + '☆'.repeat(5-r);
-                const compatClass = m.compat >= 85 ? 'high' : (m.compat >= 70 ? 'medium' : 'low');
-                tableHtml += `<tr><td><strong>${m.name}</strong></td><td><span class="star-rating">${stars(m.heat)}</span></td><td><span class="star-rating">${stars(m.rad)}</span></td><td><span class="star-rating">${stars(m.corr)}</span></td><td><span class="compat-percent ${compatClass}">${m.compat}%</span></td></tr>`;
+            top3.forEach((m, index) => {
+                const status = getStatus(index);
+                
+                tableHtml += `
+                    <tr>
+                        <td class="status-icon">
+                            <i class=" ${status.iconClass}" style="font-size: 0.8rem;"></i>
+                        </td>
+                        <td class="material-name">${m.name}</td>
+                        <td>${m.maxTemp}°C</td>
+                        <td>${m.dose} dpa</td>
+                        <td>${m.strength} МПа</td>
+                        <td class="compat-text ${status.textClass}">${status.text}</td>
+                    </tr>
+                `;
             });
             
-            tableHtml += `</tbody></table></div>`;
-            document.getElementById('resultsContainer').innerHTML = tableHtml;
+            tableHtml += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
             
-            // Строим график для лучшего материала
-            if (top8.length > 0 && top8[0].id) {
-                await renderChart(top8[0].id);
-            } else if (top8.length > 0 && top8[0].name) {
-                // Если нет id из БД, используем имя для поиска
-                const allMaterials = await loadMaterialsFromDB();
-                const found = allMaterials.find(m => m.name === top8[0].name);
-                if (found && found.id) {
-                    await renderChart(found.id);
-                }
-            }
+            document.getElementById('resultsContainer').innerHTML = tableHtml;
         }
         
         // Запуск
