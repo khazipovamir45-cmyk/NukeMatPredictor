@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>График зависимости прочности от дозы облучения</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #020e43bf 0%, #260449c2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+         
+            padding: 30px 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header h1::before {
+            
+            font-size: 32px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .chart-container {
+            position: relative;
+        }
+        
+        canvas {
+            max-height: 500px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="content">
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChart = null;
+        
+        // =======================================
+        // ДАННЫЕ ДЛЯ ГРАФИКА (можно менять здесь)
+        // =======================================
+        const materialData = {
+            point: {
+                x: 35,        // доза облучения (dpa)
+                y: 600        // минимальная прочность (MPa)
+            },
+            slope: 0.86       // коэффициент = dose_coef (MPa/dpa)
+        };
+        
+        // ============================================
+        // Функция генерации точек линии
+        // ============================================
+        function generateLinePoints(point, slope, xMin = 0, xMax = 100, pointsCount = 100) {
+            const points = [];
+            const step = (xMax - xMin) / pointsCount;
+            const x0 = point.x;
+            const y0 = point.y;
+            
+            for (let i = 0; i <= pointsCount; i++) {
+                const x = xMin + i * step;
+                const y = y0 + slope * (x - x0);
+                const finalY = Math.max(0, y);
+                
+                points.push({
+                    x: parseFloat(x.toFixed(2)),
+                    y: parseFloat(finalY.toFixed(2))
+                });
+            }
+            
+            return points;
+        }
+        
+        // ============================================
+        // Построение графика
+        // ============================================
+        function renderChart() {
+            // Генерируем точки для линии
+            const linePoints = generateLinePoints(materialData.point, materialData.slope, 0, 100, 100);
+            
+            // Экспериментальная точка
+            const experimentalPoint = [{
+                x: materialData.point.x,
+                y: materialData.point.y
+            }];
+            
+            const ctx = document.getElementById('myChart').getContext('2d');
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                      
+                        {
+                            label: 'Зависимость прочности от дозы',
+                            data: linePoints,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 0,
+                            pointHoverRadius: 2,
+                            pointHoverBackgroundColor: '#66700'
+                        },
+                        {
+                            label: 'Экспериментальная точка',
+                            data: experimentalPoint,
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#f59e0b',
+                            pointRadius: 7,
+                            pointHoverRadius: 10,
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 3,
+                            type: 'scatter',
+                            showLine: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Прочность (MPa)',
+                                font: { size: 17, weight: '500' },
+                                color: '#6c757d'
+                            },
+                            grid: {
+                                color: '#e9ecef',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                stepSize: 100,
+                                color: '#495057'
+                            }
+                        },
+                        x: {
+                            type: 'linear',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Доза облучения (dpa)',
+                                font: { size: 17, weight: '500' },
+                                color: '#6c757d'
+                            },
+                            grid: {
+                                color: '#e9ecef',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                stepSize: 20,
+                                color: '#495057'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#e9ecef',
+                            borderColor: '#667eea',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label === 'Экспериментальная точка') {
+                                        return `Эксперимент: ${context.parsed.y.toFixed(0)} MPa при ${context.parsed.x.toFixed(1)} dpa`;
+                                    }
+                                    return `Прочность: ${context.parsed.y.toFixed(0)} MPa\n Доза: ${context.parsed.x.toFixed(1)} dpa`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 10,
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Запускаем построение графика
+        renderChart();
+        
+        // Функция для обновления данных (для подключения бэкенда)
+        window.updateChartData = function(point, slope) {
+            materialData.point = point;
+            materialData.slope = slope;
+            renderChart();
+        };
+        
+        console.log('Для обновления данных используйте: updateChartData({x: 50, y: 700}, 1.2)');
+    </script>
+</body>
+</html>
