@@ -99,7 +99,7 @@
             
             for (let i = 0; i <= pointsCount; i++) {
                 const x = xMin + i * step;
-                const y = y0 + slope * (x - x0);
+                const y = y0 - slope * (x - x0);
                 const finalY = Math.max(0, y);
                 
                 points.push({
