@@ -1,18 +1,17 @@
-from flask import Flask
+from flask import Flask, render_template
 
-# Создаем экземпляр сайта
 app = Flask(__name__)
 
-# Определяем простой маршрут
+# Маршрут для главной страницы (лендинг)
 @app.route('/')
-def hello():
-    return 'Проверяю работу фласка'
+def index():
+    return render_template('index.html')
 
-# Еще один маршрут для проверки(была пройдена)
-# @app.route('/health')
-# def health():
-#     return 'OK', 200
+# Маршрут для страницы с формой
+@app.route('/form')
+def form():
+    return render_template('form.html')
 
-# Запускаем сайт
 if __name__ == '__main__':
     app.run(debug=True)
+
