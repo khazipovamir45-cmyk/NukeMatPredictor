@@ -268,13 +268,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const temperature = parseFloat(urlParams.get('temperature')) || 850;
         const dose = parseFloat(urlParams.get('dose')) || 12.5;
-        const environment = urlParams.get('environment') || 'Вода';
         const strength = parseFloat(urlParams.get('strength')) || 450;
         
         document.getElementById('paramsBadge').innerHTML = `
             <i class="fas fa-thermometer-half"></i> ${temperature}°C &nbsp;·&nbsp;
             <i class="fas fa-radiation"></i> ${dose} dpa &nbsp;·&nbsp;
-            <i class="fas fa-water"></i> ${environment} &nbsp;·&nbsp;
             <i class="fas fa-hammer"></i> ≥${strength} МПа
         `;
         
