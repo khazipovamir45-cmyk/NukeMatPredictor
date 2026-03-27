@@ -1,50 +1,42 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8"> <!-- чтобы русские буквы отображались правильно-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--страница правильно масштабировалась на телефонах-->
-    <title>NukeMatPredictor - Главная</title>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>NukeMatPredictor - Главная</title>
+    
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    <link rel="stylesheet" href="../static/style.css"> <!--CSS файл со стилями ../ на уровень выше-->
-    <!-- Замените эти строки -->
-    <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png">
-    <link rel="icon" type="image/png" href="/static/images/favicon.png">
-   
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<!--все что будет на самой старнце -->
 <body> 
-    <header> <!--шапка с навигацией-->
-        <nav>
+    <header> <nav>
             <div class="logo">
-                <i class="fas fa-atom"></i> <!--для иконки с атомом-->
-                NMP
+                <i class="fas fa-atom"></i> NMP
             </div>
-            <ul class="nav-menu"> <!--ненумерованный список для пунктов меню-->
-                <li><a href="index.html" class="active">Главная</a></li>
-                <!--li пункт списка href куда ведет ссылка-->
-                <li><a href="form.html">Начать расчёт</a></li>
-                <li><a href="#about">О проекте</a></li>
+            <ul class="nav-menu"> <li><a href="{{ url_for('index') }}" class="active">Главная</a></li>
+                <li><a href="{{ url_for('form') }}">Начать расчёт</a></li>
+                <li><a href="{{ url_for('index') }}#about">О проекте</a></li>
                 <li><a href="#">База данных</a></li>
                 <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git">GitHub</a></li>
             </ul>
         </nav>
     </header>
-    <!-- основная часть старницы -->
     <main> 
-        <section class="hero"> <!--ХОЧУ НА MAIN ПОМЕНЯТЬ-->
+        <section class="hero">
             <div class="badge">
-                <i class="fas fa-atom"></i> ядерная инженерия / МИФИ <!--снова для значка атома -->
+                <i class="fas fa-atom"></i> ядерная инженерия / МИФИ 
             </div>
-            <h1>NukeMatPredictor</h1> <!--главный заголовок -->
-            <p class="subtitle">Подбор материалов для ядерной инженерии. Прогноз поведения под различные условия эксплуатации.</p> <!-- обозначили subtittle для спец офрмления в css-->
-            <a href="form.html" class="btn btn-primary">Начать расчёт →</a>
+            <h1>NukeMatPredictor</h1> 
+            <p class="subtitle">Подбор материалов для ядерной инженерии. Прогноз поведения под различные условия эксплуатации.</p> 
+            <a href="{{ url_for('form') }}" class="btn btn-primary">Начать расчёт →</a>
         </section>
-        <!-- для кого 3 блока квадрата  -->
+        
         <section class="audience">
             <h2>Для кого это</h2>
             <div class="audience-grid">
-                <!-- Студенты -->
-                <div class="audience-card"> <!--блок1-->
+                <div class="audience-card"> 
                     <div class="audience-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
@@ -52,8 +44,7 @@
                     <p>Экономия времени, помощь в курсовых и дипломах.</p>
                 </div>
                 
-                <!-- Аспиранты -->
-                <div class="audience-card"> <!--блок2-->
+                <div class="audience-card"> 
                     <div class="audience-icon">
                         <i class="fas fa-flask"></i>
                     </div>
@@ -61,8 +52,7 @@
                     <p>Быстрая проверка гипотез, поддержка исследований.</p>
                 </div>
                 
-                <!-- Инженеры -->
-                <div class="audience-card"> <!--блок3-->
+                <div class="audience-card"> 
                     <div class="audience-icon">
                         <i class="fas fa-hard-hat"></i>
                     </div>
@@ -71,8 +61,8 @@
                 </div>
             </div>
         </section>
-        <!-- о проекте  -->
-        <section id="about" class="about"> <!--id для навигации-->
+        
+        <section id="about" class="about"> 
             <h2>О проекте</h2>
             
             <div class="about-content">
@@ -86,12 +76,11 @@
          </section>
     </main>
 
-    <!-- подвал -->
     <footer>
         <div class="footer-content">
             <p>© 2026 NukeMatPredictor · Команда МИФИ</p>
             <div class="team-links">
-                <span>Амир (PL)</span> <!--все в одной строке-->
+                <span>Амир (PL)</span> 
                 <span>Богдан (BE)</span>
                 <span>Вероника (FE)</span>
                 <span>Соня (FE)</span>
