@@ -15,31 +15,50 @@
             padding: 50px 60px;
         }
         
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
         .results-page h2 {
             font-size: 36px;
             color: white;
             font-weight: 600;
-            margin-bottom: 30px;
-            text-align: center;
+            margin: 0;
         }
         
         .params-badge {
-            background: linear-gradient(135deg, #1e6df2 0%, #0f4c8a 100%);
-            display: inline-block;
+            background: rgba(30, 109, 242, 0.25);
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
             padding: 12px 24px;
             border-radius: 50px;
             color: white;
             font-weight: 500;
-            font-size: 1rem;
-            margin-bottom: 30px;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
+            font-size: 0.9rem;
+            border: 1px solid rgba(123, 201, 255, 0.3);
         }
         
-        .params-badge i {
-            margin: 0 5px;
+        .params-badge-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .params-badge-item i {
             color: #7bc9ff;
+            font-size: 0.9rem;
+        }
+        
+        .params-badge-separator {
+            color: rgba(123, 201, 255, 0.5);
         }
         
         .materials-table-container {
@@ -191,6 +210,17 @@
                 font-size: 28px;
             }
             
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .params-badge {
+                width: 100%;
+                justify-content: center;
+                gap: 12px;
+            }
+            
             .chart-iframe {
                 height: 400px;
             }
@@ -229,9 +259,10 @@
     </header>
 
     <main class="results-page">
-        <h2>Рекомендуемые материалы</h2>
-        
-        <div class="params-badge" id="paramsBadge"></div>
+        <div class="results-header">
+            <h2>Рекомендуемые материалы</h2>
+            <div class="params-badge" id="paramsBadge"></div>
+        </div>
 
         <div id="resultsContainer">
             <div class="loading-spinner">
@@ -269,11 +300,30 @@
         const temperature = parseFloat(urlParams.get('temperature')) || 850;
         const dose = parseFloat(urlParams.get('dose')) || 12.5;
         const strength = parseFloat(urlParams.get('strength')) || 450;
+        const heatCapacity = parseFloat(urlParams.get('heat_capacity')) || 460;
+        const thermalConductivity = parseFloat(urlParams.get('thermal_conductivity')) || 28.5;
         
+        // Формируем голубой овал с новыми показателями
         document.getElementById('paramsBadge').innerHTML = `
-            <i class="fas fa-thermometer-half"></i> ${temperature}°C &nbsp;·&nbsp;
-            <i class="fas fa-radiation"></i> ${dose} dpa &nbsp;·&nbsp;
-            <i class="fas fa-hammer"></i> ≥${strength} МПа
+            <span class="params-badge-item">
+                <i class="fas fa-thermometer-half"></i> ${temperature}°C
+            </span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item">
+                <i class="fas fa-radiation"></i> ${dose} dpa
+            </span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item">
+                <i class="fas fa-hammer"></i> ≥${strength} МПа
+            </span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item">
+                <i class="fas fa-fire"></i> ${heatCapacity} J/kg·°C
+            </span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item">
+                <i class="fas fa-chart-line"></i> ${thermalConductivity} W/m·°C
+            </span>
         `;
         
         // База данных материалов
@@ -304,19 +354,19 @@
             if (index === 0) {
                 return {  
                     iconClass: 'status-best', 
-                    text: ' ★Лучший выбор',
+                    text: '★ Лучший выбор',
                     textClass: 'best'
                 };
             } else if (index === 1) {
                 return { 
                     iconClass: 'status-good', 
-                    text: '✓Подходит',
+                    text: '✓ Подходит',
                     textClass: 'good'
                 };
             } else {
                 return { 
                     iconClass: 'status-warning', 
-                    text: '✗Не рекомендуется',
+                    text: '✗ Не рекомендуется',
                     textClass: 'warning'
                 };
             }
@@ -356,7 +406,7 @@
                 tableHtml += `
                     <tr>
                         <td class="status-icon">
-                            <i class=" ${status.iconClass}" style="font-size: 0.8rem;"></i>
+                            <i class="fas fa-circle ${status.iconClass}" style="font-size: 0.8rem;"></i>
                         </td>
                         <td class="material-name">${m.name}</td>
                         <td>${m.maxTemp}°C</td>
