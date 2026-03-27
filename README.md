@@ -79,7 +79,6 @@ NukeMatPredictor/
     ├── functional_requirements.md
     ├── non_functional_requirements.md
     ├── data_model.md
-    ├── architecture.md
     ├── one_pager.md
     ├── mockup.png         # Мокапы страниц
     └── screenshots.png    # Скриншоты готового сайта
@@ -122,5 +121,5 @@ NukeMatPredictor/
 | `functional_requirements.md` | Функциональные требования |
 | `non_functional_requirements.md` | Нефункциональные требования |
 | `data_model.md` | Модель данных |
-| `architecture.md` | Архитектура проекта |
+| `usecase.png` | Как должна работать система |
 | `one_pager.md` | Краткое описание проекта |
