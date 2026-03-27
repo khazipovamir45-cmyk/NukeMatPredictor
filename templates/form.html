@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NukeMatPredictor - Расчёт</title> <!--видим во вкладке браузера -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"> <!--чтобы значки отображались-->
-    <link rel="stylesheet" href="../static/style.css"> <!--CSS файл со стилями (исправлено)-->
+    <title>NukeMatPredictor - Расчёт</title> 
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
 </head>
 <body>
-    <header> <!--шапка с навигацией-->
+    <header> 
         <nav>
             <div class="logo">
-                <i class="fas fa-atom"></i> <!--для иконки с атомом-->
+                <i class="fas fa-atom"></i> 
                 NMP
             </div>
-            <ul class="nav-menu"> <!--ненумерованный список для пунктов меню-->
-                <li><a href="index.html">Главная</a></li>
-                <!--li пункт списка href куда ведет ссылка-->
-                <li><a href="form.html" class="active">Начать расчёт</a></li>
-                <li><a href="index.html#about">О проекте</a></li>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Главная</a></li>
+                <li><a href="{{ url_for('form') }}" class="active">Начать расчёт</a></li>
+                <li><a href="{{ url_for('index') }}#about">О проекте</a></li>
                 <li><a href="#">База данных</a></li>
                 <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git">GitHub</a></li>
             </ul>
@@ -29,22 +30,19 @@
         <section class="form-page"> 
             <h2>Введите параметры</h2>
             <div class="form-container">
-                <!-- форма отправляет введенные данные на сервер -->
-                <form action="#" method="POST"> <!-- в будущем ссылка на стр резов, пост метод отправки не видно в адрес строке -->
+                <form action="#" method="POST">
                     
-                    <!-- Температура -->
                     <div class="form-group">
                         <label for="temperature">
-                            <i class="fas fa-thermometer-half"></i> Температура (°C) <!--иконка+подпись -->
+                            <i class="fas fa-thermometer-half"></i> Температура (°C)
                         </label>
                         <div class="input-wrapper">
-                            <i class="fas fa-fire"></i> <!--иконка огня -->
+                            <i class="fas fa-fire"></i>
                             <input type="number" id="temperature" name="temperature" 
                                    value="850" placeholder="например 850" required>
-                        </div> <!--required - поле обязательное type="number" - можно вводить только цифры-->
+                        </div> 
                     </div>
                     
-                    <!-- Доза облучения -->
                     <div class="form-group">
                         <label for="dose">
                             <i class="fas fa-bolt"></i> Доза облучения (dpa)
@@ -53,27 +51,9 @@
                             <i class="fas fa-radiation"></i>
                             <input type="number" step="0.1" id="dose" name="dose" 
                                    value="12.5" placeholder="например 12.5" required>
-                            <!--step="0.1" - можно вводить числа с десятыми долями-->
                         </div>
                     </div>
-                    
-                    <!-- Среда (select выпадающий список) 
-                    <div class="form-group">
-                        <label for="environment">
-                            <i class="fas fa-water"></i> Среда (тип среды)
-                        </label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-flask"></i>
-                            <select id="environment" name="environment" required>
-                                <option value="Свинец">Свинец</option> option один пункт списка 
-                                <option value="Вода" selected>Вода</option> selected выбрано по умолчанию 
-                                <option value="Гелий">Гелий</option>
-                                <option value="Вакуум">Вакуум</option>
-                            </select>
-                        </div>
-                    </div> -->
 
-                    <!-- Минимальная прочность -->
                     <div class="form-group">
                         <label for="strength">
                             <i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)
@@ -85,7 +65,6 @@
                         </div>
                     </div>
 
-                    <!-- Теплопроводность -->
                     <div class="form-group">
                         <label for="conductivity">
                             <i class="fas fa-ruler"></i> Теплопроводность (Вт/(м·К))
@@ -97,7 +76,6 @@
                         </div>
                     </div>
                     
-                    <!-- Теплоёмкость -->
                     <div class="form-group">
                         <label for="heatcapacity">
                             <i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))
@@ -108,29 +86,7 @@
                                    value="500" placeholder="например 500" required>
                         </div>
                     </div>
-
-                   <!--  доп параметры 
-                    <div class="additional-params">
-                        <div class="params-header">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Дополнительные параметры для расчёта</span>
-                        </div>
-                        <div class="params-list">            
-                            <!-- Коррозионная стойкость 
-                            <div class="param-chip">
-                                <i class="fas fa-flask"></i>
-                                <span>Коррозионная стойкость (мм/год)</span>
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                        <!-- Кнопка добавления параметра 
-                        <button type="button" class="add-param-btn">
-                            <i class="fas fa-plus-circle"></i> Добавить ещё параметр
-                        </button>
-                    </div> 
-                    -->
                     
-                    <!-- кнопка отправки -->
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-calculator"></i> Рассчитать
                     </button>
@@ -139,7 +95,6 @@
         </section>
     </main>
     
-    <!-- подвал -->
     <footer>
         <div class="footer-content">
             <p>© 2026 NukeMatPredictor · Команда МИФИ</p>
