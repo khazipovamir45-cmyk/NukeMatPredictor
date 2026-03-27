@@ -82,7 +82,8 @@ NukeMatPredictor/
     ├── architecture.md
     ├── one_pager.md
     ├── mockup.png         # Мокапы страниц
-    └── screenshots/       # Скриншоты готового сайта
+    └── screenshots.png    # Скриншоты готового сайта
+    └── usecase.png    # Скриншоты готового сайта
 ```
 
 ---
