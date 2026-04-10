@@ -2,11 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!--Чтобы браузер правильно отображал русские буквы -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Говорит браузеру, что ширина страницы равна ширине экрана устройства.-->
     <title>NukeMatPredictor - Расчёт</title> 
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    
+    <!--библиотека для иконок-->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
@@ -87,7 +89,7 @@
                             <input type="number" id="heatcapacity" name="heatcapacity" 
                                    value="500" placeholder="например 500" required>
                         </div>
-                    </div>
+                    </div>  
                     
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-calculator"></i> Рассчитать
