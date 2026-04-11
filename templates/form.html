@@ -2,95 +2,74 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!--Чтобы браузер правильно отображал русские буквы -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Говорит браузеру, что ширина страницы равна ширине экрана устройства.-->
-    <title>NukeMatPredictor - Расчёт</title> 
-    
+    <title>NukeMatPredictor - Расчёт</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    <!--библиотека для иконок-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <header> 
+    <header>
         <nav>
             <div class="logo">
-                <i class="fas fa-atom"></i> 
-                NMP
+                <i class="fas fa-atom"></i>
+                <span>NMP</span>
             </div>
             <ul class="nav-menu">
-                <li><a href="{{ url_for('index') }}">Главная</a></li>
-                <li><a href="{{ url_for('form') }}" class="active">Начать расчёт</a></li>
-                <li><a href="{{ url_for('index') }}#about">О проекте</a></li>
-                <li><a href="#">База данных</a></li>
-                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git">GitHub</a></li>
+                <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="{{ url_for('form') }}" class="active"><i class="fas fa-calculator"></i> Начать расчёт</a></li>
+                <li><a href="{{ url_for('index') }}#about"><i class="fas fa-info-circle"></i> О проекте</a></li>
+                <li><a href="{{ url_for('download_csv') }}"><i class="fas fa-database"></i> База данных</a></li>
+                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git"><i class="fab fa-github"></i> GitHub</a></li>
             </ul>
         </nav>
     </header>
-    
+
     <main>
-        <section class="form-page"> 
+        <section class="form-page">
             <h2>Введите параметры</h2>
             <div class="form-container">
-                <form action="#" method="POST">
-                    
+                <form action="/result" method="POST">
                     <div class="form-group">
-                        <label for="temperature">
-                            <i class="fas fa-thermometer-half"></i> Температура (°C)
-                        </label>
+                        <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-fire"></i>
-                            <input type="number" id="temperature" name="temperature" 
-                                   value="850" placeholder="например 850" required>
-                        </div> 
+                            <input type="number" name="temperature" value="850" step="10" required>
+                        </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="dose">
-                            <i class="fas fa-bolt"></i> Доза облучения (dpa)
-                        </label>
+                        <label><i class="fas fa-bolt"></i> Доза облучения (dpa)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-radiation"></i>
-                            <input type="number" step="0.1" id="dose" name="dose" 
-                                   value="12.5" placeholder="например 12.5" required>
+                            <input type="number" name="dose" value="12.5" step="0.5" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="strength">
-                            <i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)
-                        </label>
+                        <label><i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-weight-hanging"></i>
-                            <input type="number" id="strength" name="strength" 
-                                   value="450" placeholder="например 450" required>
+                            <input type="number" name="strength" value="450" step="10" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="conductivity">
-                            <i class="fas fa-ruler"></i> Теплопроводность (Вт/(м·К))
-                        </label>
+                        <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
                         <div class="input-wrapper">
-                            <i class="fas fa-thermometer-half"></i>
-                            <input type="number" step="0.1" id="conductivity" name="conductivity" 
-                                   value="15.5" placeholder="например 15.5" required>
+                            <i class="fas fa-chart-line"></i>
+                            <input type="number" name="thermal_cond" value="15.5" step="0.5" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="heatcapacity">
-                            <i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))
-                        </label>
+                        <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
                         <div class="input-wrapper">
-                            <i class="fas fa-fire"></i>
-                            <input type="number" id="heatcapacity" name="heatcapacity" 
-                                   value="500" placeholder="например 500" required>
+                            <i class="fas fa-chart-simple"></i>
+                            <input type="number" name="heat_capacity" value="500" step="10" required>
                         </div>
-                    </div>  
-                    
+                    </div>
+
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-calculator"></i> Рассчитать
                     </button>
@@ -98,10 +77,10 @@
             </div>
         </section>
     </main>
-    
+
     <footer>
         <div class="footer-content">
-            <p>© 2026 NukeMatPredictor · Команда МИФИ</p>
+            <p>© 2026 NukeMatPredictor · МИФИ</p>
             <div class="team-links">
                 <span>Амир (PL)</span>
                 <span>Богдан (BE)</span>

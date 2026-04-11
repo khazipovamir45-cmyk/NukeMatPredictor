@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NukeMatPredictor - Рекомендации</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
     <style>
         * {
             margin: 0;
@@ -32,7 +32,6 @@
             border: 1px solid #265177;
         }
 
-        /* Хедер с навигацией */
         .custom-header {
             background: #0a1b30;
             padding: 18px 40px;
@@ -134,7 +133,6 @@
             color: rgba(123, 201, 255, 0.5);
         }
 
-        /* ТАБЛИЦА — 4 КОЛОНКИ */
         .table-container {
             background: #112c48;
             border-radius: 30px;
@@ -173,14 +171,6 @@
             background: #1e456e;
         }
 
-        /* Стили для статуса совместимости */
-        .status-icon {
-            font-size: 1rem;
-            width: 35px;
-            text-align: center;
-            display: inline-block;
-        }
-        
         .status-best {
             color: #6fcf97;
         }
@@ -192,32 +182,7 @@
         .status-warning {
             color: #eb5757;
         }
-        
-        .compat-text {
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        
-        .compat-text.best {
-            color: #6fcf97;
-        }
-        
-        .compat-text.good {
-            color: #f2c94c;
-        }
-        
-        .compat-text.warning {
-            color: #eb5757;
-        }
 
-        /* Убираем маркеры (точки) в столбце материала */
-        .material-name {
-            font-weight: 500;
-            list-style: none;
-            display: inline-block;
-        }
-
-        /* ДВА БЛОКА ДЛЯ ГРАФИКОВ */
         .graphs-section {
             display: flex;
             flex-wrap: wrap;
@@ -253,35 +218,9 @@
             min-height: 320px;
             background: #0a1f33;
             border-radius: 20px;
-            border: 1px solid #2d5780;
-            overflow: hidden;
-            position: relative;
+            padding: 10px;
         }
 
-        .graph-iframe {
-            width: 100%;
-            height: 320px;
-            border: none;
-            display: block;
-        }
-
-        .graph-placeholder {
-            text-align: center;
-            color: #7fa3cf;
-            padding: 60px 20px;
-        }
-
-        .graph-placeholder i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.6;
-        }
-
-        .graph-placeholder p {
-            font-size: 14px;
-        }
-
-        /* ФОРМА ПЕРЕСЧЁТА (5 полей) — все поля строго на одном уровне */
         .recalc-section {
             background: #0a1f33;
             border-radius: 30px;
@@ -304,7 +243,6 @@
             color: #7bc9ff;
         }
 
-        /* Исправленная сетка: 5 колонок одинаковой ширины */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -388,7 +326,6 @@
             gap: 25px;
         }
 
-        /* Адаптивность: на маленьких экранах поля переносятся */
         @media (max-width: 1000px) {
             .form-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -413,7 +350,6 @@
 </head>
 <body>
 <div class="results-page">
-    <!-- Хедер с навигацией -->
     <div class="custom-header">
         <div class="logo">
             <i class="fas fa-atom"></i>
@@ -423,95 +359,97 @@
             <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
             <li><a href="/form"><i class="fas fa-calculator"></i> Начать расчёт</a></li>
             <li><a href="/#about"><i class="fas fa-info-circle"></i> О проекте</a></li>
-            <li><a href="#"><i class="fas fa-database"></i> База данных</a></li>
+            <li><a href="/download_csv"><i class="fas fa-database"></i> База данных</a></li>
             <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git"><i class="fab fa-github"></i> GitHub</a></li>
         </ul>
     </div>
 
     <div class="results-content">
-        <!-- Заголовок + плашка параметров -->
         <div class="results-header">
             <h2>Рекомендуемые материалы</h2>
-            <div class="params-badge" id="paramsBadge">
-                <!-- динамически заполняется -->
+            <div class="params-badge">
+                <span class="params-badge-item"><i class="fas fa-thermometer-half"></i> {{ temperature }}°C</span>
+                <span class="params-badge-separator">·</span>
+                <span class="params-badge-item"><i class="fas fa-radiation"></i> {{ dose }} dpa</span>
+                <span class="params-badge-separator">·</span>
+                <span class="params-badge-item"><i class="fas fa-hammer"></i> ≥{{ strength }} МПа</span>
+                <span class="params-badge-separator">·</span>
+                <span class="params-badge-item"><i class="fas fa-fire-alt"></i> {{ thermal_cond }} Вт/(м·К)</span>
+                <span class="params-badge-separator">·</span>
+                <span class="params-badge-item"><i class="fas fa-temperature-high"></i> {{ heat_capacity }} Дж/(кг·К)</span>
             </div>
         </div>
 
-        <!-- 1. ТАБЛИЦА (4 колонки) -->
         <div class="table-container">
-            <table class="materials-table" id="materialsTable">
+            <table class="materials-table">
                 <thead>
                     <tr>
-                        <th style="width: 45px"></th>
                         <th>Материал</th>
                         <th>Радиационная стойкость (dpa)</th>
                         <th>Коррозия (мм/год)</th>
                         <th>Совместимость</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- динамическое наполнение -->
+                <tbody>
+                    {% for material in materials %}
+                    <tr {% if loop.first %}class="highlight-row"{% endif %}>
+                        <td><strong>{{ material.name }}</strong></td>
+                        <td>{{ material.dose }} dpa</td>
+                        <td>{{ material.corrosion }} мм/год</td>
+                        <td><span class="{{ material.status_class }}">{{ material.status_text }}</span></td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <!-- 2. ДВА БЛОКА ДЛЯ ГРАФИКОВ -->
         <div class="graphs-section">
             <div class="graph-container">
                 <div class="graph-title">
-                    <i class="fas fa-chart-line"></i> График зависимости прочности от температуры
+                    <i class="fas fa-chart-line"></i> Зависимость прочности от температуры
                 </div>
-                <div class="graph-frame-wrapper" id="graph1Wrapper">
-                    <div class="graph-placeholder" id="graph1Placeholder">
-                        <i class="fas fa-chart-line"></i>
-                        <p>Загрузка графика...</p>
-                    </div>
-                </div>
+                <div class="graph-frame-wrapper" id="graph1"></div>
             </div>
-
             <div class="graph-container">
                 <div class="graph-title">
-                    <i class="fas fa-chart-bar"></i> График зависимости прочности от дозы
+                    <i class="fas fa-chart-bar"></i> Зависимость прочности от дозы
                 </div>
-                <div class="graph-frame-wrapper" id="graph2Wrapper">
-                    <div class="graph-placeholder" id="graph2Placeholder">
-                        <i class="fas fa-chart-bar"></i>
-                        <p>Загрузка графика...</p>
-                    </div>
-                </div>
+                <div class="graph-frame-wrapper" id="graph2"></div>
             </div>
         </div>
 
-        <!-- 3. ФОРМА ПЕРЕСЧЁТА (5 полей) — все поля на одном уровне -->
+        <!-- ФОРМА ПЕРЕСЧЁТА -->
         <div class="recalc-section">
             <div class="recalc-title">
                 <i class="fas fa-sliders-h"></i> Пересчитать подбор
             </div>
-            <div class="form-grid">
-                <div class="form-field">
-                    <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
-                    <input type="number" id="tempInput" value="850" step="10">
+            <form action="/result" method="POST">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
+                        <input type="number" name="temperature" value="{{ temperature }}" step="10" required>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
+                        <input type="number" name="dose" value="{{ dose }}" step="0.5" required>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
+                        <input type="number" name="strength" value="{{ strength }}" step="10" required>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
+                        <input type="number" name="thermal_cond" value="{{ thermal_cond }}" step="0.5" required>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
+                        <input type="number" name="heat_capacity" value="{{ heat_capacity }}" step="10" required>
+                    </div>
                 </div>
-                <div class="form-field">
-                    <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
-                    <input type="number" id="doseInput" value="12.5" step="0.5">
-                </div>
-                <div class="form-field">
-                    <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
-                    <input type="number" id="strengthReqInput" value="450" step="10">
-                </div>
-                <div class="form-field">
-                    <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
-                    <input type="number" id="thermalInput" value="15.5" step="0.5">
-                </div>
-                <div class="form-field">
-                    <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
-                    <input type="number" id="heatCapacityInput" value="500" step="10">
-                </div>
-            </div>
-            <button class="recalc-btn" id="recalcBtn">
-                <i class="fas fa-sync-alt"></i> Выполнить пересчёт
-            </button>
+                <button type="submit" class="recalc-btn">
+                    <i class="fas fa-sync-alt"></i> Выполнить пересчёт
+                </button>
+            </form>
         </div>
     </div>
 
@@ -528,189 +466,45 @@
 </div>
 
 <script>
-    // ============================================================
-    // НАСТРОЙКА: УКАЖИТЕ ПУТИ К ВАШИМ ФАЙЛАМ С ГРАФИКАМИ
-    // ============================================================
-    const GRAPH1_SRC = "graph1.html";   // замените на путь к вашему первому графику
-    const GRAPH2_SRC = "graph2.html";   // замените на путь к вашему второму графику
-    // ============================================================
+    const tempGraphData = {{ temp_graph | safe }};
+    const doseGraphData = {{ dose_graph | safe }};
+    const materialName = "{{ optimal_material_name }}";
     
-    // База данных материалов (как в исходном коде)
-    const materialsDB = [
-        { id: 1, name: "Карбид кремния (SiC)", maxTemp: 1200, strength: 350, dose: 50 },
-        { id: 2, name: "Сплав ЭК-181", maxTemp: 650, strength: 580, dose: 30 },
-        { id: 3, name: "Сталь ЭП823-Ш", maxTemp: 700, strength: 600, dose: 35 },
-        { id: 4, name: "Сталь 316L", maxTemp: 550, strength: 480, dose: 10 },
-        { id: 5, name: "V-4Cr-4Ti", maxTemp: 700, strength: 460, dose: 30 },
-        { id: 6, name: "Zircaloy-4", maxTemp: 340, strength: 335, dose: 8 },
-        { id: 7, name: "Графит", maxTemp: 800, strength: 25, dose: 1 },
-        { id: 8, name: "UO₂", maxTemp: 1200, strength: 150, dose: 60 },
-        { id: 9, name: "B₄C", maxTemp: 800, strength: 200, dose: 25 },
-        { id: 10, name: "Инконель 718", maxTemp: 650, strength: 1000, dose: 12 }
-    ];
-
-    // Функция расчета очков
-    function calculateScore(material, temp, doseReq, strengthReq) {
-        let score = 0;
-        if (material.maxTemp >= temp) score += 35;
-        if (material.dose >= doseReq) score += 35;
-        if (material.strength >= strengthReq) score += 30;
-        return score;
-    }
-    
-    // Функция определения статуса (только один лучший выбор)
-    function getStatus(index) {
-        if (index === 0) {
-            return {  
-                iconClass: 'status-best', 
-                text: '★ Лучший выбор',
-                textClass: 'best'
-            };
-        } else if (index === 1) {
-            return { 
-                iconClass: 'status-good', 
-                text: '✓ Подходит',
-                textClass: 'good'
-            };
-        } else {
-            return { 
-                iconClass: 'status-warning', 
-                text: '✗ Не рекомендуется',
-                textClass: 'warning'
-            };
-        }
-    }
-
-    // Функция загрузки графика в контейнер через iframe
-    function loadGraphIntoContainer(wrapperId, graphSrc) {
-        const wrapper = document.getElementById(wrapperId);
-        if (!wrapper) return;
-        
-        if (!graphSrc || graphSrc === "") {
-            wrapper.innerHTML = `
-                <div class="graph-placeholder">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>Ошибка: путь к графику не указан</p>
-                    <p style="font-size: 12px;">Проверьте переменные GRAPH1_SRC и GRAPH2_SRC в коде</p>
-                </div>
-            `;
-            return;
-        }
-        
-        wrapper.innerHTML = '';
-        const iframe = document.createElement('iframe');
-        iframe.className = 'graph-iframe';
-        iframe.src = graphSrc;
-        iframe.title = 'Интерактивный график';
-        iframe.style.width = '100%';
-        iframe.style.height = '320px';
-        iframe.style.border = 'none';
-        iframe.style.background = '#0a1f33';
-        
-        iframe.onerror = () => {
-            wrapper.innerHTML = `
-                <div class="graph-placeholder">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>Ошибка загрузки графика</p>
-                    <p style="font-size: 12px;">Не удалось загрузить: ${graphSrc}</p>
-                </div>
-            `;
-        };
-        
-        wrapper.appendChild(iframe);
-    }
-
-    // Функция обновления таблицы и плашки параметров
-    function updateTableAndBadge() {
-        // Получаем параметры из полей формы
-        let temperature = parseFloat(document.getElementById('tempInput').value);
-        let dose = parseFloat(document.getElementById('doseInput').value);
-        let requiredStrength = parseFloat(document.getElementById('strengthReqInput').value);
-        let thermalCond = parseFloat(document.getElementById('thermalInput').value);
-        let heatCap = parseFloat(document.getElementById('heatCapacityInput').value);
-
-        if (isNaN(temperature)) temperature = 850;
-        if (isNaN(dose)) dose = 12.5;
-        if (isNaN(requiredStrength)) requiredStrength = 450;
-        if (isNaN(thermalCond)) thermalCond = 15.5;
-        if (isNaN(heatCap)) heatCap = 500;
-
-        // Обновляем плашку с 5 параметрами
-        document.getElementById('paramsBadge').innerHTML = `
-            <span class="params-badge-item"><i class="fas fa-thermometer-half"></i> ${temperature}°C</span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item"><i class="fas fa-radiation"></i> ${dose} dpa</span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item"><i class="fas fa-hammer"></i> ≥${requiredStrength} МПа</span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item"><i class="fas fa-fire-alt"></i> ${thermalCond} Вт/(м·К)</span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item"><i class="fas fa-temperature-high"></i> ${heatCap} Дж/(кг·К)</span>
-        `;
-
-        // Расчет очков и сортировка
-        const materialsWithScore = materialsDB.map(m => ({
-            ...m,
-            score: calculateScore(m, temperature, dose, requiredStrength)
-        })).sort((a, b) => b.score - a.score);
-        
-        // Берем только 3 лучших
-        const top3 = materialsWithScore.slice(0, 3);
-
-        // Заполнение таблицы
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        
-        top3.forEach((material, index) => {
-            const status = getStatus(index);
-            const row = tbody.insertRow();
-            
-            // Колонка 0: иконка статуса
-            const cellIcon = row.insertCell(0);
-            
-            cellIcon.style.width = "45px";
-            
-            // Колонка 1: Материал (чистый текст, без точек и маркеров)
-            const cellName = row.insertCell(1);
-            cellName.innerHTML = `<span class="material-name">${material.name}</span>`;
-            
-            // Колонка 2: Радиационная стойкость (dpa)
-            const cellRad = row.insertCell(2);
-            cellRad.textContent = `${material.dose} dpa`;
-            
-            // Колонка 3: Коррозия (мм/год)
-            let corrosionValue = "0.00";
-            if (material.name.includes("Карбид")) corrosionValue = "0.002";
-            else if (material.name.includes("ЭК-181")) corrosionValue = "0.015";
-            else if (material.name.includes("ЭП823")) corrosionValue = "0.012";
-            else if (material.name.includes("316L")) corrosionValue = "0.035";
-            else if (material.name.includes("V-4Cr")) corrosionValue = "0.010";
-            else if (material.name.includes("Zircaloy")) corrosionValue = "0.005";
-            else if (material.name.includes("Графит")) corrosionValue = "0.050";
-            else if (material.name.includes("UO₂")) corrosionValue = "0.001";
-            else if (material.name.includes("B₄C")) corrosionValue = "0.008";
-            else if (material.name.includes("Инконель")) corrosionValue = "0.003";
-            const cellCorr = row.insertCell(3);
-            cellCorr.textContent = `${corrosionValue} мм/год`;
-            
-            // Колонка 4: Совместимость
-            const cellCompat = row.insertCell(4);
-            cellCompat.innerHTML = `<span class="compat-text ${status.textClass}">${status.text}</span>`;
+    if (tempGraphData && tempGraphData.x && tempGraphData.y) {
+        Plotly.newPlot('graph1', [{
+            x: tempGraphData.x,
+            y: tempGraphData.y,
+            mode: 'lines',
+            type: 'scatter',
+            line: { color: '#7bc9ff', width: 3 },
+            name: 'Прочность'
+        }], {
+            title: materialName,
+            xaxis: { title: 'Температура (°C)', gridcolor: '#265177', color: 'white' },
+            yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
+            paper_bgcolor: '#0a1f33',
+            plot_bgcolor: '#0a1f33',
+            font: { color: 'white' }
         });
     }
-
-    // Обработчики событий
-    document.getElementById('recalcBtn').addEventListener('click', () => {
-        updateTableAndBadge();
-    });
-
-    // Загружаем графики при загрузке страницы
-    loadGraphIntoContainer('graph1Wrapper', GRAPH1_SRC);
-    loadGraphIntoContainer('graph2Wrapper', GRAPH2_SRC);
     
-    // Инициализация таблицы и плашки
-    updateTableAndBadge();
+    if (doseGraphData && doseGraphData.x && doseGraphData.y) {
+        Plotly.newPlot('graph2', [{
+            x: doseGraphData.x,
+            y: doseGraphData.y,
+            mode: 'lines',
+            type: 'scatter',
+            line: { color: '#f2c94c', width: 3 },
+            name: 'Прочность'
+        }], {
+            title: materialName,
+            xaxis: { title: 'Доза облучения (dpa)', gridcolor: '#265177', color: 'white' },
+            yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
+            paper_bgcolor: '#0a1f33',
+            plot_bgcolor: '#0a1f33',
+            font: { color: 'white' }
+        });
+    }
 </script>
 </body>
 </html>
-```
