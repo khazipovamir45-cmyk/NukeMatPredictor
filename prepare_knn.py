@@ -29,8 +29,3 @@ for i, material in enumerate(materials):
     strength_ref = material["min_required_strength"] + material["temp_coef"] * max(0, material['temperature'] - 20) + material["dose_coef"] * material["irradiation_dose"]
     materials_list[i]["strength_ref"] = strength_ref
 joblib.dump(materials_list, "materials_list.pkl")
-
-
-
-
-
