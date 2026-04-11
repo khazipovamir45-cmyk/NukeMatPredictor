@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,32 +6,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NukeMatPredictor - Рекомендации</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    <link rel="stylesheet" href="../static/style.css">
     <style>
-        /* Дополнительные стили только для страницы результатов */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #0b1a2f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
         .results-page {
             max-width: 1300px;
-            margin: 0 auto;
+            width: 100%;
             background: #0e233b;
-            padding: 50px 60px;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid #265177;
         }
-        
+
+        /* Хедер с навигацией */
+        .custom-header {
+            background: #0a1b30;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 1px solid #1f3a57;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            color: #7bc9ff;
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+
+        .nav-menu a i {
+            color: #7fa3cf;
+        }
+
+        .nav-menu a:hover {
+            background: #1e3a5f;
+        }
+
+        .results-content {
+            padding: 40px 50px;
+        }
+
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             flex-wrap: wrap;
             gap: 20px;
         }
-        
-        .results-page h2 {
+
+        h2 {
             font-size: 36px;
             color: white;
             font-weight: 600;
             margin: 0;
         }
-        
+
         .params-badge {
             background: rgba(30, 109, 242, 0.25);
             backdrop-filter: blur(4px);
@@ -45,60 +119,66 @@
             font-size: 0.9rem;
             border: 1px solid rgba(123, 201, 255, 0.3);
         }
-        
+
         .params-badge-item {
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        
+
         .params-badge-item i {
             color: #7bc9ff;
-            font-size: 0.9rem;
         }
-        
+
         .params-badge-separator {
             color: rgba(123, 201, 255, 0.5);
         }
-        
-        .materials-table-container {
+
+        /* ТАБЛИЦА — 4 КОЛОНКИ */
+        .table-container {
             background: #112c48;
             border-radius: 30px;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             border: 1px solid #265177;
             overflow-x: auto;
         }
-        
+
         .materials-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 500px;
         }
-        
+
         .materials-table th,
         .materials-table td {
-            padding: 18px 15px;
+            padding: 16px 15px;
             text-align: left;
             border-bottom: 1px solid #265177;
             color: white;
         }
-        
+
         .materials-table th {
             background: #0a1f33;
             font-weight: 600;
             color: #7bc9ff;
             font-size: 1rem;
         }
-        
+
         .materials-table tr:last-child td {
             border-bottom: none;
         }
-        
+
+        .highlight-row {
+            background: #1e456e;
+        }
+
+        /* Стили для статуса совместимости */
         .status-icon {
-            font-size: 1.2rem;
-            width: 45px;
+            font-size: 1rem;
+            width: 35px;
             text-align: center;
+            display: inline-block;
         }
         
         .status-best {
@@ -116,7 +196,6 @@
         .compat-text {
             font-weight: 500;
             font-size: 0.95rem;
-            letter-spacing: 0.3px;
         }
         
         .compat-text.best {
@@ -130,311 +209,508 @@
         .compat-text.warning {
             color: #eb5757;
         }
-        
+
+        /* Убираем маркеры (точки) в столбце материала */
         .material-name {
             font-weight: 500;
-            font-size: 1rem;
-            color: #e0e0e0;
+            list-style: none;
+            display: inline-block;
         }
-        
-        .chart-iframe-container {
+
+        /* ДВА БЛОКА ДЛЯ ГРАФИКОВ */
+        .graphs-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .graph-container {
+            flex: 1;
+            min-width: 280px;
             background: #112c48;
             border-radius: 30px;
-            padding: 0;
-            margin-bottom: 30px;
+            padding: 20px;
             border: 1px solid #265177;
-            overflow: hidden;
         }
-        
-        .chart-iframe {
+
+        .graph-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .graph-title i {
+            color: #7bc9ff;
+        }
+
+        .graph-frame-wrapper {
             width: 100%;
-            height: 550px;
+            min-height: 320px;
+            background: #0a1f33;
+            border-radius: 20px;
+            border: 1px solid #2d5780;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .graph-iframe {
+            width: 100%;
+            height: 320px;
             border: none;
             display: block;
         }
-        
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+
+        .graph-placeholder {
+            text-align: center;
+            color: #7fa3cf;
+            padding: 60px 20px;
         }
-        
-        .btn-icon {
+
+        .graph-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
+        .graph-placeholder p {
+            font-size: 14px;
+        }
+
+        /* ФОРМА ПЕРЕСЧЁТА (5 полей) — все поля строго на одном уровне */
+        .recalc-section {
             background: #0a1f33;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #265177;
+        }
+
+        .recalc-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recalc-title i {
+            color: #7bc9ff;
+        }
+
+        /* Исправленная сетка: 5 колонок одинаковой ширины */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .form-field label i {
+            color: #7bc9ff;
+            width: 20px;
+        }
+
+        .form-field input {
+            background: #0e233b;
             border: 1px solid #2d5780;
-            padding: 12px 28px;
             border-radius: 50px;
+            padding: 12px 18px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .form-field input:focus {
+            border-color: #1e6df2;
+            box-shadow: 0 0 5px rgba(30, 109, 242, 0.5);
+        }
+
+        .recalc-btn {
+            background: #1e6df2;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            transition: 0.2s;
+            border: 1px solid #5faaff;
         }
-        
-        .btn-icon i {
-            color: #7bc9ff;
-        }
-        
-        .btn-icon:hover {
-            background: #1e3a5f;
+
+        .recalc-btn:hover {
+            background: #0e5ad8;
             transform: translateY(-2px);
         }
-        
-        .loading-spinner {
-            text-align: center;
-            padding: 50px;
-            background: #112c48;
-            border-radius: 30px;
+
+        footer {
+            background: #0b1d31;
+            padding: 20px 50px;
+            border-top: 1px solid #1d3d5e;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: white;
+            font-size: 14px;
         }
-        
-        .loading-spinner i {
-            font-size: 3rem;
-            color: #7bc9ff;
-            animation: spin 1s linear infinite;
+
+        .team-links {
+            display: flex;
+            gap: 25px;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            .results-page {
-                padding: 30px 20px;
+
+        /* Адаптивность: на маленьких экранах поля переносятся */
+        @media (max-width: 1000px) {
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
-            
-            .results-page h2 {
+        }
+
+        @media (max-width: 768px) {
+            .results-content {
+                padding: 25px 20px;
+            }
+            h2 {
                 font-size: 28px;
             }
-            
-            .results-header {
-                flex-direction: column;
-                align-items: flex-start;
+            .graph-container {
+                min-width: 100%;
             }
-            
-            .params-badge {
-                width: 100%;
-                justify-content: center;
-                gap: 12px;
-            }
-            
-            .chart-iframe {
-                height: 400px;
-            }
-            
-            .materials-table th,
-            .materials-table td {
-                padding: 12px 10px;
-            }
-            
-            .status-icon {
-                font-size: 1rem;
-                width: 35px;
-            }
-            
-            .compat-text {
-                font-size: 0.85rem;
+            .form-field label {
+                white-space: normal;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <i class="fas fa-atom"></i>
-                NMP
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
-                <li><a href="/form"><i class="fas fa-calculator"></i> Начать расчёт</a></li>
-                <li><a href="/#about"><i class="fas fa-info-circle"></i> О проекте</a></li>
-                <li><a href="#"><i class="fas fa-database"></i> База данных</a></li>
-                <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git"><i class="fab fa-github"></i> GitHub</a></li>
-            </ul>
-        </nav>
-    </header>
+<div class="results-page">
+    <!-- Хедер с навигацией -->
+    <div class="custom-header">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>NMP</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="/form"><i class="fas fa-calculator"></i> Начать расчёт</a></li>
+            <li><a href="/#about"><i class="fas fa-info-circle"></i> О проекте</a></li>
+            <li><a href="#"><i class="fas fa-database"></i> База данных</a></li>
+            <li><a href="https://github.com/khazipovamir45-cmyk/NukeMatPredictor.git"><i class="fab fa-github"></i> GitHub</a></li>
+        </ul>
+    </div>
 
-    <main class="results-page">
+    <div class="results-content">
+        <!-- Заголовок + плашка параметров -->
         <div class="results-header">
             <h2>Рекомендуемые материалы</h2>
-            <div class="params-badge" id="paramsBadge"></div>
-        </div>
-
-        <div id="resultsContainer">
-            <div class="loading-spinner">
-                <i class="fas fa-atom fa-spin"></i>
-                <p>Загрузка...</p>
+            <div class="params-badge" id="paramsBadge">
+                <!-- динамически заполняется -->
             </div>
         </div>
 
-        <div class="chart-iframe-container">
-            <iframe class="chart-iframe" src="/static/chartjs.html" title="График зависимости прочности от дозы облучения"></iframe>
+        <!-- 1. ТАБЛИЦА (4 колонки) -->
+        <div class="table-container">
+            <table class="materials-table" id="materialsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 45px"></th>
+                        <th>Материал</th>
+                        <th>Радиационная стойкость (dpa)</th>
+                        <th>Коррозия (мм/год)</th>
+                        <th>Совместимость</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- динамическое наполнение -->
+                </tbody>
+            </table>
         </div>
 
-        <div class="action-buttons">
-            <button class="btn-icon" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Экспорт PDF</button>
-            <button class="btn-icon" id="shareBtn"><i class="fas fa-share-alt"></i> Поделиться</button>
+        <!-- 2. ДВА БЛОКА ДЛЯ ГРАФИКОВ -->
+        <div class="graphs-section">
+            <div class="graph-container">
+                <div class="graph-title">
+                    <i class="fas fa-chart-line"></i> График зависимости прочности от температуры
+                </div>
+                <div class="graph-frame-wrapper" id="graph1Wrapper">
+                    <div class="graph-placeholder" id="graph1Placeholder">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Загрузка графика...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="graph-container">
+                <div class="graph-title">
+                    <i class="fas fa-chart-bar"></i> График зависимости прочности от дозы
+                </div>
+                <div class="graph-frame-wrapper" id="graph2Wrapper">
+                    <div class="graph-placeholder" id="graph2Placeholder">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Загрузка графика...</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+
+        <!-- 3. ФОРМА ПЕРЕСЧЁТА (5 полей) — все поля на одном уровне -->
+        <div class="recalc-section">
+            <div class="recalc-title">
+                <i class="fas fa-sliders-h"></i> Пересчитать подбор
+            </div>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
+                    <input type="number" id="tempInput" value="850" step="10">
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
+                    <input type="number" id="doseInput" value="12.5" step="0.5">
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
+                    <input type="number" id="strengthReqInput" value="450" step="10">
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
+                    <input type="number" id="thermalInput" value="15.5" step="0.5">
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
+                    <input type="number" id="heatCapacityInput" value="500" step="10">
+                </div>
+            </div>
+            <button class="recalc-btn" id="recalcBtn">
+                <i class="fas fa-sync-alt"></i> Выполнить пересчёт
+            </button>
+        </div>
+    </div>
 
     <footer>
-        <div class="footer-content">
-            <p>© 2026 NukeMatPredictor · Команда МИФИ</p>
-            <div class="team-links">
-                <span>Амир (PL)</span>
-                <span>Богдан (BE)</span>
-                <span>Вероника (FE)</span>
-                <span>Соня (FE)</span>
-                <span>Саша (BA)</span>
-            </div>
+        <div>© 2026 NukeMatPredictor · МИФИ</div>
+        <div class="team-links">
+            <span>Амир (PL)</span>
+            <span>Богдан (BE)</span>
+            <span>Вероника (FE)</span>
+            <span>Соня (FE)</span>
+            <span>Саша (BA)</span>
         </div>
     </footer>
+</div>
 
-    <script>
-        // Получаем параметры из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const temperature = parseFloat(urlParams.get('temperature')) || 850;
-        const dose = parseFloat(urlParams.get('dose')) || 12.5;
-        const strength = parseFloat(urlParams.get('strength')) || 450;
-        const heatCapacity = parseFloat(urlParams.get('heat_capacity')) || 460;
-        const thermalConductivity = parseFloat(urlParams.get('thermal_conductivity')) || 28.5;
-        
-        // Формируем голубой овал с новыми показателями
-        document.getElementById('paramsBadge').innerHTML = `
-            <span class="params-badge-item">
-                <i class="fas fa-thermometer-half"></i> ${temperature}°C
-            </span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item">
-                <i class="fas fa-radiation"></i> ${dose} dpa
-            </span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item">
-                <i class="fas fa-hammer"></i> ≥${strength} МПа
-            </span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item">
-                <i class="fas fa-fire"></i> ${heatCapacity} J/kg·°C
-            </span>
-            <span class="params-badge-separator">·</span>
-            <span class="params-badge-item">
-                <i class="fas fa-chart-line"></i> ${thermalConductivity} W/m·°C
-            </span>
-        `;
-        
-        // База данных материалов
-        const materialsDB = [
-            { id: 1, name: "Карбид кремния (SiC)", maxTemp: 1200, strength: 350, dose: 50 },
-            { id: 2, name: "Сплав ЭК-181", maxTemp: 650, strength: 580, dose: 30 },
-            { id: 3, name: "Сталь ЭП823-Ш", maxTemp: 700, strength: 600, dose: 35 },
-            { id: 4, name: "Сталь 316L", maxTemp: 550, strength: 480, dose: 10 },
-            { id: 5, name: "V-4Cr-4Ti", maxTemp: 700, strength: 460, dose: 30 },
-            { id: 6, name: "Zircaloy-4", maxTemp: 340, strength: 335, dose: 8 },
-            { id: 7, name: "Графит", maxTemp: 800, strength: 25, dose: 1 },
-            { id: 8, name: "UO₂", maxTemp: 1200, strength: 150, dose: 60 },
-            { id: 9, name: "B₄C", maxTemp: 800, strength: 200, dose: 25 },
-            { id: 10, name: "Инконель 718", maxTemp: 650, strength: 1000, dose: 12 }
-        ];
-        
-        // Функция расчета очков
-        function calculateScore(material, temp, doseReq, strengthReq) {
-            let score = 0;
-            if (material.maxTemp >= temp) score += 35;
-            if (material.dose >= doseReq) score += 35;
-            if (material.strength >= strengthReq) score += 30;
-            return score;
+<script>
+    // ============================================================
+    // НАСТРОЙКА: УКАЖИТЕ ПУТИ К ВАШИМ ФАЙЛАМ С ГРАФИКАМИ
+    // ============================================================
+    const GRAPH1_SRC = "graph1.html";   // замените на путь к вашему первому графику
+    const GRAPH2_SRC = "graph2.html";   // замените на путь к вашему второму графику
+    // ============================================================
+    
+    // База данных материалов (как в исходном коде)
+    const materialsDB = [
+        { id: 1, name: "Карбид кремния (SiC)", maxTemp: 1200, strength: 350, dose: 50 },
+        { id: 2, name: "Сплав ЭК-181", maxTemp: 650, strength: 580, dose: 30 },
+        { id: 3, name: "Сталь ЭП823-Ш", maxTemp: 700, strength: 600, dose: 35 },
+        { id: 4, name: "Сталь 316L", maxTemp: 550, strength: 480, dose: 10 },
+        { id: 5, name: "V-4Cr-4Ti", maxTemp: 700, strength: 460, dose: 30 },
+        { id: 6, name: "Zircaloy-4", maxTemp: 340, strength: 335, dose: 8 },
+        { id: 7, name: "Графит", maxTemp: 800, strength: 25, dose: 1 },
+        { id: 8, name: "UO₂", maxTemp: 1200, strength: 150, dose: 60 },
+        { id: 9, name: "B₄C", maxTemp: 800, strength: 200, dose: 25 },
+        { id: 10, name: "Инконель 718", maxTemp: 650, strength: 1000, dose: 12 }
+    ];
+
+    // Функция расчета очков
+    function calculateScore(material, temp, doseReq, strengthReq) {
+        let score = 0;
+        if (material.maxTemp >= temp) score += 35;
+        if (material.dose >= doseReq) score += 35;
+        if (material.strength >= strengthReq) score += 30;
+        return score;
+    }
+    
+    // Функция определения статуса (только один лучший выбор)
+    function getStatus(index) {
+        if (index === 0) {
+            return {  
+                iconClass: 'status-best', 
+                text: '★ Лучший выбор',
+                textClass: 'best'
+            };
+        } else if (index === 1) {
+            return { 
+                iconClass: 'status-good', 
+                text: '✓ Подходит',
+                textClass: 'good'
+            };
+        } else {
+            return { 
+                iconClass: 'status-warning', 
+                text: '✗ Не рекомендуется',
+                textClass: 'warning'
+            };
         }
+    }
+
+    // Функция загрузки графика в контейнер через iframe
+    function loadGraphIntoContainer(wrapperId, graphSrc) {
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
         
-        // Функция определения статуса
-        function getStatus(index) {
-            if (index === 0) {
-                return {  
-                    iconClass: 'status-best', 
-                    text: '★ Лучший выбор',
-                    textClass: 'best'
-                };
-            } else if (index === 1) {
-                return { 
-                    iconClass: 'status-good', 
-                    text: '✓ Подходит',
-                    textClass: 'good'
-                };
-            } else {
-                return { 
-                    iconClass: 'status-warning', 
-                    text: '✗ Не рекомендуется',
-                    textClass: 'warning'
-                };
-            }
-        }
-        
-        // Основная функция
-        function init() {
-            // Расчет очков и сортировка
-            const materialsWithScore = materialsDB.map(m => ({
-                ...m,
-                score: calculateScore(m, temperature, dose, strength)
-            })).sort((a, b) => b.score - a.score);
-            
-            // Берем только 3 лучших
-            const top3 = materialsWithScore.slice(0, 3);
-            
-            // Генерация таблицы
-            let tableHtml = `
-                <div class="materials-table-container">
-                    <table class="materials-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 45px"></th>
-                                <th>Материал</th>
-                                <th>Макс. температура</th>
-                                <th>Доза облучения</th>
-                                <th>Прочность</th>
-                                <th>Совместимость</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            top3.forEach((m, index) => {
-                const status = getStatus(index);
-                
-                tableHtml += `
-                    <tr>
-                        <td class="status-icon">
-                            <i class="fas fa-circle ${status.iconClass}" style="font-size: 0.8rem;"></i>
-                        </td>
-                        <td class="material-name">${m.name}</td>
-                        <td>${m.maxTemp}°C</td>
-                        <td>${m.dose} dpa</td>
-                        <td>${m.strength} МПа</td>
-                        <td class="compat-text ${status.textClass}">${status.text}</td>
-                    </tr>
-                `;
-            });
-            
-            tableHtml += `
-                        </tbody>
-                    </table>
+        if (!graphSrc || graphSrc === "") {
+            wrapper.innerHTML = `
+                <div class="graph-placeholder">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Ошибка: путь к графику не указан</p>
+                    <p style="font-size: 12px;">Проверьте переменные GRAPH1_SRC и GRAPH2_SRC в коде</p>
                 </div>
             `;
-            
-            document.getElementById('resultsContainer').innerHTML = tableHtml;
+            return;
         }
         
-        // Запуск
-        init();
+        wrapper.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.className = 'graph-iframe';
+        iframe.src = graphSrc;
+        iframe.title = 'Интерактивный график';
+        iframe.style.width = '100%';
+        iframe.style.height = '320px';
+        iframe.style.border = 'none';
+        iframe.style.background = '#0a1f33';
         
-        // Обработчики кнопок
-        document.getElementById('exportPdfBtn').onclick = () => alert('Экспорт PDF: Ctrl+P');
-        document.getElementById('shareBtn').onclick = () => {
-            if (navigator.share) navigator.share({ title: 'NukeMatPredictor', url: location.href });
-            else navigator.clipboard.writeText(location.href).then(() => alert('Ссылка скопирована'));
+        iframe.onerror = () => {
+            wrapper.innerHTML = `
+                <div class="graph-placeholder">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Ошибка загрузки графика</p>
+                    <p style="font-size: 12px;">Не удалось загрузить: ${graphSrc}</p>
+                </div>
+            `;
         };
-    </script>
+        
+        wrapper.appendChild(iframe);
+    }
+
+    // Функция обновления таблицы и плашки параметров
+    function updateTableAndBadge() {
+        // Получаем параметры из полей формы
+        let temperature = parseFloat(document.getElementById('tempInput').value);
+        let dose = parseFloat(document.getElementById('doseInput').value);
+        let requiredStrength = parseFloat(document.getElementById('strengthReqInput').value);
+        let thermalCond = parseFloat(document.getElementById('thermalInput').value);
+        let heatCap = parseFloat(document.getElementById('heatCapacityInput').value);
+
+        if (isNaN(temperature)) temperature = 850;
+        if (isNaN(dose)) dose = 12.5;
+        if (isNaN(requiredStrength)) requiredStrength = 450;
+        if (isNaN(thermalCond)) thermalCond = 15.5;
+        if (isNaN(heatCap)) heatCap = 500;
+
+        // Обновляем плашку с 5 параметрами
+        document.getElementById('paramsBadge').innerHTML = `
+            <span class="params-badge-item"><i class="fas fa-thermometer-half"></i> ${temperature}°C</span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item"><i class="fas fa-radiation"></i> ${dose} dpa</span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item"><i class="fas fa-hammer"></i> ≥${requiredStrength} МПа</span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item"><i class="fas fa-fire-alt"></i> ${thermalCond} Вт/(м·К)</span>
+            <span class="params-badge-separator">·</span>
+            <span class="params-badge-item"><i class="fas fa-temperature-high"></i> ${heatCap} Дж/(кг·К)</span>
+        `;
+
+        // Расчет очков и сортировка
+        const materialsWithScore = materialsDB.map(m => ({
+            ...m,
+            score: calculateScore(m, temperature, dose, requiredStrength)
+        })).sort((a, b) => b.score - a.score);
+        
+        // Берем только 3 лучших
+        const top3 = materialsWithScore.slice(0, 3);
+
+        // Заполнение таблицы
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        
+        top3.forEach((material, index) => {
+            const status = getStatus(index);
+            const row = tbody.insertRow();
+            
+            // Колонка 0: иконка статуса
+            const cellIcon = row.insertCell(0);
+            
+            cellIcon.style.width = "45px";
+            
+            // Колонка 1: Материал (чистый текст, без точек и маркеров)
+            const cellName = row.insertCell(1);
+            cellName.innerHTML = `<span class="material-name">${material.name}</span>`;
+            
+            // Колонка 2: Радиационная стойкость (dpa)
+            const cellRad = row.insertCell(2);
+            cellRad.textContent = `${material.dose} dpa`;
+            
+            // Колонка 3: Коррозия (мм/год)
+            let corrosionValue = "0.00";
+            if (material.name.includes("Карбид")) corrosionValue = "0.002";
+            else if (material.name.includes("ЭК-181")) corrosionValue = "0.015";
+            else if (material.name.includes("ЭП823")) corrosionValue = "0.012";
+            else if (material.name.includes("316L")) corrosionValue = "0.035";
+            else if (material.name.includes("V-4Cr")) corrosionValue = "0.010";
+            else if (material.name.includes("Zircaloy")) corrosionValue = "0.005";
+            else if (material.name.includes("Графит")) corrosionValue = "0.050";
+            else if (material.name.includes("UO₂")) corrosionValue = "0.001";
+            else if (material.name.includes("B₄C")) corrosionValue = "0.008";
+            else if (material.name.includes("Инконель")) corrosionValue = "0.003";
+            const cellCorr = row.insertCell(3);
+            cellCorr.textContent = `${corrosionValue} мм/год`;
+            
+            // Колонка 4: Совместимость
+            const cellCompat = row.insertCell(4);
+            cellCompat.innerHTML = `<span class="compat-text ${status.textClass}">${status.text}</span>`;
+        });
+    }
+
+    // Обработчики событий
+    document.getElementById('recalcBtn').addEventListener('click', () => {
+        updateTableAndBadge();
+    });
+
+    // Загружаем графики при загрузке страницы
+    loadGraphIntoContainer('graph1Wrapper', GRAPH1_SRC);
+    loadGraphIntoContainer('graph2Wrapper', GRAPH2_SRC);
+    
+    // Инициализация таблицы и плашки
+    updateTableAndBadge();
+</script>
 </body>
 </html>
+```
