@@ -3,21 +3,6 @@ from flask import Flask, render_template, request, redirect, send_file
 app = Flask(__name__)
 
 
-def rank_materials(temperature, irradiation_dose, min_required_strength, heat_capacity, thermal_conductivity):
-    """Ранжирует материалы по пригодности"""
-    pass
-
-
-def generate_dose_points(material, max_dose=50, num_points=10):
-    """Генерирует точки для графика зависимости прочности от дозы облучения"""
-    pass
-
-
-def generate_temp_points(material, max_temp=1000, num_points=10):
-    """Генерирует точки для графика зависимости прочности от температуры"""
-    pass
-
-
 @app.route('/')
 def index():
     """Главная страница (лендинг)"""
