@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, send_file
+from model import load_knn_data, rank_materials, generate_dose_points, generate_temp_points
 
 app = Flask(__name__)
 
@@ -43,8 +44,11 @@ def result():
 
     # Ранжируем материалы(пока заглушка)
     ranked_materials = rank_materials(
-        temperature, irradiation_dose, min_required_strength,
-        heat_capacity, thermal_conductivity
+        temp=temperature,
+        dose=irradiation_dose,
+        strength=min_required_strength,
+        therm_cond=thermal_conductivity,
+        heat_cap=heat_capacity
     )
 
     # Берём лучший материал(первый в списке)
