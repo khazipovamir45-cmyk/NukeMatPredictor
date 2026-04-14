@@ -1,111 +1,80 @@
-from flask import Flask, render_template, request, send_file
-import sqlite3
-import csv
-from io import StringIO, BytesIO
-import json
-
-from model import load_knn_data, rank_materials, generate_dose_points, generate_temp_points
-
-load_knn_data()
+from flask import Flask, render_template, request, redirect, send_file
 
 app = Flask(__name__)
 
 
-def get_corrosion_value(material_name):
-    """Возвращает коррозию в мм/год для материала"""
-    corrosion_map = {
-        "Карбид кремния": "0.002",
-        "Сплав ЭК-181": "0.015",
-        "Сталь ЭП823-Ш": "0.012",
-        "Сталь 316L": "0.035",
-        "V-4Cr-4Ti": "0.010",
-        "Zircaloy-4": "0.005",
-        "Графит": "0.050",
-        "UO₂": "0.001",
-        "B₄C": "0.008",
-        "Инконель 718": "0.003"
-    }
-    for key, value in corrosion_map.items():
-        if key in material_name:
-            return value
-    return "0.010"
-
-
 @app.route('/')
 def index():
+    """Главная страница (лендинг)"""
     return render_template('index.html')
 
 
 @app.route('/form')
 def form():
+    """Страница с формой для ввода параметров"""
     return render_template('form.html')
 
 
-@app.route('/result', methods=['POST'])
+@app.route('/result', methods=['GET', 'POST'])
 def result():
+    """
+    Обработка формы:
+    - GET → редирект на /form
+    - POST → обработка данных, вызов модели, показ результатов
+    """
+    if request.method == 'GET':
+        return redirect('/form')
+
     # Получаем данные из формы
-    temperature = float(request.form.get('temperature', 850))
-    dose = float(request.form.get('dose', 12.5))
-    strength = float(request.form.get('strength', 450))
-    thermal_cond = float(request.form.get('thermal_cond', 15.5))
-    heat_capacity = float(request.form.get('heat_capacity', 500))
-    
-    # Получаем 3 материала через KNN
-    results = rank_materials(temperature, dose, strength, thermal_cond, heat_capacity)
-    
-    # Форматируем для отображения
-    materials_for_template = []
-    for material in results:
-        corrosion = get_corrosion_value(material.get('name', ''))
-        materials_for_template.append({
-            'name': material.get('name', 'Неизвестно'),
-            'dose': material.get('dose', 0),
-            'corrosion': corrosion,
-            'status_icon': '★' if material.get('status') == 'optimal' else ('✓' if material.get('status') == 'acceptable' else '✗'),
-            'status_class': 'status-best' if material.get('status') == 'optimal' else ('status-good' if material.get('status') == 'acceptable' else 'status-warning'),
-            'status_text': material.get('status_text', '')
-        })
-    
-    # Генерируем графики для оптимального материала
-    optimal_material = results[0]
-    doses, strengths_by_dose = generate_dose_points(optimal_material, T_user=temperature)
-    temps, strengths_by_temp = generate_temp_points(optimal_material, dose_user=dose)
-    
+    temperature = float(request.form.get('temperature', 0))
+    irradiation_dose = float(request.form.get('irradiation_dose', 0))
+    min_required_strength = float(request.form.get('min_required_strength', 0))
+    heat_capacity = float(request.form.get('heat_capacity', 0))
+    thermal_conductivity = float(request.form.get('thermal_conductivity', 0))
+
+    # Сохраняем параметры для передачи в шаблон
+    params = {
+        'temperature': temperature,
+        'irradiation_dose': irradiation_dose,
+        'min_required_strength': min_required_strength,
+        'heat_capacity': heat_capacity,
+        'thermal_conductivity': thermal_conductivity
+    }
+
+    # Ранжируем материалы(пока заглушка)
+    ranked_materials = rank_materials(
+        temperature, irradiation_dose, min_required_strength,
+        heat_capacity, thermal_conductivity
+    )
+
+    # Берём лучший материал(первый в списке)
+    best_material = ranked_materials[0] if ranked_materials else None
+
+    # Генерируем точки для графиков(пока заглушка)
+    dose_labels = []
+    dose_data = []
+    temp_labels = []
+    temp_data = []
+    if best_material:
+        dose_labels, dose_data = generate_dose_points(best_material)
+        temp_labels, temp_data = generate_temp_points(best_material)
+
+    # Передаём всё в result.html
     return render_template(
         'result.html',
-        temperature=temperature,
-        dose=dose,
-        strength=strength,
-        thermal_cond=thermal_cond,
-        heat_capacity=heat_capacity,
-        materials=materials_for_template,
-        optimal_material_name=optimal_material.get('name', 'Оптимальный материал'),
-        temp_graph=json.dumps({'x': temps, 'y': strengths_by_temp}),
-        dose_graph=json.dumps({'x': doses, 'y': strengths_by_dose})
+        materials=ranked_materials,
+        params=params,
+        dose_labels=dose_labels,
+        dose_data=dose_data,
+        temp_labels=temp_labels,
+        temp_data=temp_data
     )
 
 
-@app.route('/download_csv')
-def download_csv():
-    conn = sqlite3.connect('materials.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM materials")
-    data = cursor.fetchall()
-    columns = [description[0] for description in cursor.description]
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(columns)
-    writer.writerows(data)
-    conn.close()
-    
-    output.seek(0)
-    return send_file(
-        BytesIO(output.getvalue().encode('utf-8-sig')),
-        as_attachment=True,
-        download_name='nukemat_database.csv',
-        mimetype='text/csv'
-    )
+@app.route('/download_xlsx')
+def download_xlsx():
+    """Скачивание файла materials.xlsx"""
+    return send_file('materials.xlsx', as_attachment=True)
 
 
 if __name__ == '__main__':
