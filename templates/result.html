@@ -394,8 +394,8 @@
                     {% for material in materials %}
                     <tr {% if loop.first %}class="highlight-row"{% endif %}>
                         <td><strong>{{ material.name }}</strong></td>
-                        <td>{{ material.dose }} dpa</td>
-                        <td>{{ material.corrosion }} мм/год</td>
+                        <td>{{ material.irradiation_dose }} dpa</td>
+                        <td>{{ material.corrosion_rate }} мм/год</td>
                         <td><span class="{{ material.status_class }}">{{ material.status_text }}</span></td>
                     </tr>
                     {% endfor %}
@@ -467,7 +467,7 @@
 
 <script>
     const tempGraphData = {{ temp_graph | safe }};
-    const doseGraphData = {{ dose_graph | safe }};
+    const doseGraphData = {{ dose_graph|safe}};
     const materialName = "{{ optimal_material_name }}";
     
     if (tempGraphData && tempGraphData.x && tempGraphData.y) {

@@ -1,6 +1,7 @@
 import joblib
 import math
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 scaler = None
 materials_list = None
