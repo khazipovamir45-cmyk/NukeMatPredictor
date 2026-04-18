@@ -427,23 +427,23 @@
                 <div class="form-grid">
                     <div class="form-field">
                         <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
-                        <input type="number" name="temperature" value="{{ temperature }}" step="10" required>
+                        <input type="number" name="temperature" value="{{ temperature }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
-                        <input type="number" name="dose" value="{{ dose }}" step="0.5" required>
+                        <input type="number" name="dose" value="{{ dose }}"required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
-                        <input type="number" name="strength" value="{{ strength }}" step="10" required>
+                        <input type="number" name="strength" value="{{ strength }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
-                        <input type="number" name="thermal_cond" value="{{ thermal_cond }}" step="0.5" required>
+                        <input type="number" name="thermal_cond" value="{{ thermal_cond }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
-                        <input type="number" name="heat_capacity" value="{{ heat_capacity }}" step="10" required>
+                        <input type="number" name="heat_capacity" value="{{ heat_capacity }}" required>
                     </div>
                 </div>
                 <button type="submit" class="recalc-btn">
