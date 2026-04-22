@@ -7,6 +7,56 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <style>
+        /* Только стили для подсказок — не трогаем остальной дизайн */
+        .form-group {
+            position: relative;
+        }
+        
+        /* Красная рамка для некорректного поля */
+        .input-wrapper input.error-input {
+            border-color: #eb5757 !important;
+            outline: none;
+        }
+        
+        /* Кастомная подсказка */
+        .custom-error {
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            background: #eb5757;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            z-index: 100;
+            white-space: nowrap;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .custom-error::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 12px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 4px solid #eb5757;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -29,12 +79,15 @@
         <section class="form-page">
             <h2>Введите параметры</h2>
             <div class="form-container">
-                <form action="/result" method="POST">
+                <form action="/result" method="POST" id="calculationForm">
                     <div class="form-group">
                         <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-fire"></i>
-                            <input type="number" name="temperature" value="850" step="any" required>
+                            <input type="text" 
+                                   name="temperature" 
+                                   value="850" 
+                                   required>
                         </div>
                     </div>
 
@@ -42,7 +95,10 @@
                         <label><i class="fas fa-bolt"></i> Доза облучения (dpa)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-radiation"></i>
-                            <input type="number" name="dose" value="12.5" step="any" required>
+                            <input type="text" 
+                                   name="dose" 
+                                   value="12.5" 
+                                   required>
                         </div>
                     </div>
 
@@ -50,7 +106,10 @@
                         <label><i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-weight-hanging"></i>
-                            <input type="number" name="strength" value="450" step="any" required>
+                            <input type="text" 
+                                   name="strength" 
+                                   value="450" 
+                                   required>
                         </div>
                     </div>
 
@@ -58,7 +117,10 @@
                         <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-line"></i>
-                            <input type="number" name="thermal_cond" value="15.5" step="any" required>
+                            <input type="text" 
+                                   name="thermal_cond" 
+                                   value="15.5" 
+                                   required>
                         </div>
                     </div>
 
@@ -66,7 +128,10 @@
                         <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-simple"></i>
-                            <input type="number" name="heat_capacity" value="500" step="any" required>
+                            <input type="text" 
+                                   name="heat_capacity" 
+                                   value="500" 
+                                   required>
                         </div>
                     </div>
 
@@ -90,5 +155,141 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        (function() {
+            const form = document.getElementById('calculationForm');
+            const inputs = form.querySelectorAll('.input-wrapper input');
+            
+            // Удаляем существующую ошибку
+            function removeError(input) {
+                const wrapper = input.closest('.input-wrapper');
+                const existingError = wrapper.querySelector('.custom-error');
+                if (existingError) existingError.remove();
+                input.classList.remove('error-input');
+            }
+            
+            // Показываем ошибку
+            function showError(input, message) {
+                removeError(input);
+                input.classList.add('error-input');
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'custom-error';
+                errorDiv.textContent = message;
+                input.closest('.input-wrapper').appendChild(errorDiv);
+            }
+            
+            // Проверка на число (дробные разрешены)
+            function isValidNumber(str) {
+                if (str === null || str === undefined || str.trim() === '') return false;
+                const num = parseFloat(str);
+                return !isNaN(num) && isFinite(num);
+            }
+            
+            // Получить название поля по атрибуту name (надёжный способ)
+            function getFieldName(input) {
+                const name = input.getAttribute('name');
+                switch(name) {
+                    case 'temperature': return 'Температура';
+                    case 'dose': return 'Доза облучения';
+                    case 'strength': return 'Прочность';
+                    case 'thermal_cond': return 'Теплопроводность';
+                    case 'heat_capacity': return 'Теплоёмкость';
+                    default: return 'поле';
+                }
+            }
+            
+            // Валидация одного поля
+            function validateInput(input) {
+                const value = input.value;
+                const fieldName = getFieldName(input);
+                
+                // Проверка на пустое поле
+                if (value.trim() === '') {
+                    showError(input, 'Заполните поле');
+                    return false;
+                }
+                
+                // Проверка на число
+                if (!isValidNumber(value)) {
+                    const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
+                    showError(input, `"${displayValue}" — не число`);
+                    return false;
+                }
+                
+                const num = parseFloat(value);
+                
+                // Для температуры можно отрицательные значения (криогенные температуры)
+                if (fieldName === 'Температура') {
+                    if (num < -273.15) {
+                        showError(input, 'Температура не может быть ниже -273.15°C');
+                        return false;
+                    }
+                    if (num > 5000) {
+                        showError(input, 'Слишком высокая температура (максимум 5000°C)');
+                        return false;
+                    }
+                    removeError(input);
+                    return true;
+                }
+                
+                // Доза облучения не может быть отрицательной
+                if (fieldName === 'Доза облучения' && num < 0) {
+                    showError(input, 'Доза облучения не может быть отрицательной');
+                    return false;
+                }
+                
+                // Прочность должна быть больше 0
+                if (fieldName === 'Прочность' && num <= 0) {
+                    showError(input, 'Прочность должна быть больше 0 МПа');
+                    return false;
+                }
+                
+                // Теплопроводность должна быть больше 0
+                if (fieldName === 'Теплопроводность' && num <= 0) {
+                    showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
+                    return false;
+                }
+                
+                
+                
+                removeError(input);
+                return true;
+            }
+            
+            // События для каждого поля
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    validateInput(this);
+                });
+                
+                input.addEventListener('blur', function() {
+                    validateInput(this);
+                });
+            });
+            
+            // Валидация перед отправкой
+            form.addEventListener('submit', function(e) {
+                let allValid = true;
+                
+                inputs.forEach(input => {
+                    if (!validateInput(input)) {
+                        allValid = false;
+                    }
+                });
+                
+                if (!allValid) {
+                    e.preventDefault();
+                    // Прокрутка к первой ошибке
+                    const firstError = document.querySelector('.error-input');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

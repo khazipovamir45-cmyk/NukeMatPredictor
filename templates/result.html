@@ -254,6 +254,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
         }
 
         .form-field label {
@@ -286,6 +287,48 @@
         .form-field input:focus {
             border-color: #1e6df2;
             box-shadow: 0 0 5px rgba(30, 109, 242, 0.5);
+        }
+
+        /* Стили для ошибок */
+        .form-field input.error-input {
+            border-color: #eb5757 !important;
+        }
+
+        .field-error {
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            background: #eb5757;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            z-index: 100;
+            white-space: nowrap;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .field-error::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 15px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 4px solid #eb5757;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .recalc-btn {
@@ -344,6 +387,11 @@
             }
             .form-field label {
                 white-space: normal;
+            }
+            .field-error {
+                white-space: normal;
+                bottom: -30px;
+                font-size: 10px;
             }
         }
     </style>
@@ -423,27 +471,27 @@
             <div class="recalc-title">
                 <i class="fas fa-sliders-h"></i> Пересчитать подбор
             </div>
-            <form action="/result" method="POST">
+            <form action="/result" method="POST" id="recalcForm">
                 <div class="form-grid">
                     <div class="form-field">
                         <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
-                        <input type="number" name="temperature" value="{{ temperature }}" required>
+                        <input type="text" name="temperature" value="{{ temperature }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
-                        <input type="number" name="dose" value="{{ dose }}"required>
+                        <input type="text" name="dose" value="{{ dose }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
-                        <input type="number" name="strength" value="{{ strength }}" required>
+                        <input type="text" name="strength" value="{{ strength }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
-                        <input type="number" name="thermal_cond" value="{{ thermal_cond }}" required>
+                        <input type="text" name="thermal_cond" value="{{ thermal_cond }}" required>
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
-                        <input type="number" name="heat_capacity" value="{{ heat_capacity }}" required>
+                        <input type="text" name="heat_capacity" value="{{ heat_capacity }}" required>
                     </div>
                 </div>
                 <button type="submit" class="recalc-btn">
@@ -466,6 +514,7 @@
 </div>
 
 <script>
+    // Графики
     const tempGraphData = {{ temp_graph | safe }};
     const doseGraphData = {{ dose_graph|safe}};
     const materialName = "{{ optimal_material_name }}";
@@ -505,6 +554,140 @@
             font: { color: 'white' }
         });
     }
+
+    // ВАЛИДАЦИЯ ФОРМЫ ПЕРЕСЧЁТА
+    (function() {
+        const form = document.getElementById('recalcForm');
+        const inputs = form.querySelectorAll('.form-field input');
+        
+        // Удаление ошибки
+        function removeError(input) {
+            const field = input.closest('.form-field');
+            const existingError = field.querySelector('.field-error');
+            if (existingError) existingError.remove();
+            input.classList.remove('error-input');
+        }
+        
+        // Показ ошибки
+        function showError(input, message) {
+            removeError(input);
+            input.classList.add('error-input');
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = message;
+            input.closest('.form-field').appendChild(errorDiv);
+        }
+        
+        // Проверка на число (дробные разрешены)
+        function isValidNumber(str) {
+            if (str === null || str === undefined || str.trim() === '') return false;
+            const num = parseFloat(str);
+            return !isNaN(num) && isFinite(num);
+        }
+        
+        // ВАЖНО: Упрощённое получение названия поля по атрибуту name
+        function getFieldName(input) {
+            const name = input.getAttribute('name');
+            switch(name) {
+                case 'temperature': return 'Температура';
+                case 'dose': return 'Доза облучения';
+                case 'strength': return 'Мин прочность';
+                case 'thermal_cond': return 'Теплопроводность';
+                case 'heat_capacity': return 'Теплоёмкость';
+                default: return name;
+            }
+        }
+        
+        // Валидация поля
+        function validateField(input, fieldName) {
+            const value = input.value;
+            
+            // Проверка на пустое поле
+            if (value.trim() === '') {
+                showError(input, 'Заполните поле');
+                return false;
+            }
+            
+            // Проверка на число
+            if (!isValidNumber(value)) {
+                const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
+                showError(input, `"${displayValue}" — не число`);
+                return false;
+            }
+            
+            const num = parseFloat(value);
+            
+            // Для температуры можно отрицательные значения (криогенные температуры)
+            if (fieldName === 'Температура') {
+                if (num < -273.15) {
+                    showError(input, 'Температура не может быть ниже -273.15°C');
+                    return false;
+                }
+                if (num > 5000) {
+                    showError(input, 'Слишком высокая температура (максимум 5000°C)');
+                    return false;
+                }
+            }
+            
+            // Доза облучения не может быть отрицательной
+            if (fieldName === 'Доза облучения' && num < 0) {
+                showError(input, 'Доза облучения не может быть отрицательной');
+                return false;
+            }
+            
+            // Прочность должна быть больше 0
+            if (fieldName === 'Мин прочность' && num <= 0) {
+                showError(input, 'Прочность должна быть больше 0 МПа');
+                return false;
+            }
+            
+            // Теплопроводность должна быть больше 0
+            if (fieldName === 'Теплопроводность' && num <= 0) {
+                showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
+                return false;
+            }
+            
+            
+            
+            removeError(input);
+            return true;
+        }
+        
+        // Навешиваем события на поля
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const fieldName = getFieldName(this);
+                validateField(this, fieldName);
+            });
+            
+            input.addEventListener('blur', function() {
+                const fieldName = getFieldName(this);
+                validateField(this, fieldName);
+            });
+        });
+        
+        // Валидация перед отправкой
+        form.addEventListener('submit', function(e) {
+            let allValid = true;
+            
+            inputs.forEach(input => {
+                const fieldName = getFieldName(input);
+                if (!validateField(input, fieldName)) {
+                    allValid = false;
+                }
+            });
+            
+            if (!allValid) {
+                e.preventDefault();
+                const firstError = document.querySelector('.error-input');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+    })();
 </script>
 </body>
 </html>
