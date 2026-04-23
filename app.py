@@ -42,7 +42,7 @@ def result():
         'thermal_conductivity': thermal_conductivity
     }
 
-    # Ранжируем материалы(пока заглушка)
+    # Ранжируем материалы
     ranked_materials = rank_materials(
         temp=temperature,
         dose=irradiation_dose,
@@ -54,7 +54,7 @@ def result():
     # Берём лучший материал(первый в списке)
     best_material = ranked_materials[0] if ranked_materials else None
 
-    # Генерируем точки для графиков(пока заглушка)
+    # Генерируем точки для графиков
     dose_labels = []
     dose_data = []
     temp_labels = []
