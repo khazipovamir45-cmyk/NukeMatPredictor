@@ -393,7 +393,23 @@
                 bottom: -30px;
                 font-size: 10px;
             }
+
+        }/* для подстветки таблицы */
+        .optimal {
+            background-color: #1e6f3f !important;
+            color: white;
         }
+
+        .acceptable {
+            background-color: #7a6e1f !important;
+            color: white;
+        }
+
+        .unsuitable {
+            background-color: #6e2a2a !important;
+            color: white;
+        }
+        
     </style>
 </head>
 <body>
@@ -440,13 +456,14 @@
                 </thead>
                 <tbody>
                     {% for material in materials %}
-                    <tr {% if loop.first %}class="highlight-row"{% endif %}>
+                    <tr class="{{ material.status }} {% if loop.first %}highlight-row{% endif %}">
                         <td><strong>{{ material.name }}</strong></td>
                         <td>{{ material.irradiation_dose }} dpa</td>
                         <td>{{ material.corrosion_rate }} мм/год</td>
-                        <td><span class="{{ material.status_class }}">{{ material.status_text }}</span></td>
+                        <td><span>{{ material.status_text }}</span></td>
                     </tr>
                     {% endfor %}
+
                 </tbody>
             </table>
         </div>
@@ -466,7 +483,7 @@
             </div>
         </div>
 
-        <!-- ФОРМА ПЕРЕСЧЁТА -->
+        <!-- форма перерасчета -->
         <div class="recalc-section">
             <div class="recalc-title">
                 <i class="fas fa-sliders-h"></i> Пересчитать подбор
@@ -497,7 +514,12 @@
                 <button type="submit" class="recalc-btn">
                     <i class="fas fa-sync-alt"></i> Выполнить пересчёт
                 </button>
-            </form>
+            </form> 
+            <!--кнопка новый расчет с ссылкой на форм  -->
+            <div style="margin-top: 25px; text-align: center; padding-top: 20px; border-top: 1px solid #265177;">
+                <a href="/form" class="recalc-btn" style="background: #2d5780; border-color: #5faaff; text-decoration: none;">
+                    <i class="fas fa-plus-circle"></i> Новый расчёт
+                </a>
         </div>
     </div>
 
