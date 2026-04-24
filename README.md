@@ -123,9 +123,16 @@ NukeMatPredictor/
 
 | Файл | Описание |
 |---|---|
-| `user_stories.md` | Пользовательские истории |
-| `functional_requirements.md` | Функциональные требования |
-| `non_functional_requirements.md` | Нефункциональные требования |
-| `data_model.md` | Модель данных |
-| `usecase.png` | Как должна работать система |
+| [`conceptual_model.md`](docs/conceptual_model.md) | Концептуальная модель: слои системы и их взаимодействие |
+| [`data_model.md`](docs/data_model.md) | Модель данных: поля таблицы, типы, ограничения |
+| [`er_diagram.jpg`](docs/er_diagram.jpg) | ER-диаграмма базы данных |
+| [`functional_requirements.md`](docs/functional_requirements.md) | Функциональные требования |
+| [`non_functional_requirements.md`](docs/non_functional_requirements.md) | Нефункциональные требования (производительность, надёжность) |
+| [`testing_checklist.md`](docs/testing_checklist.md) | Чеклист тестирования |
+| [`user_stories.md`](docs/user_stories.md) | Пользовательские истории |
+| [`mockup.png`](docs/mockup.png) | Мокапы страниц (дизайн до реализации) |
+| [`screenshots.png`](docs/screenshots.png) | Скриншоты готового сайта |
+| [`usecase.png`](docs/usecase.png) | Use-case диаграмма |
+
+---
 
