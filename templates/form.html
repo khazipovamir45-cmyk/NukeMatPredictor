@@ -179,14 +179,22 @@
                 errorDiv.textContent = message;
                 input.closest('.input-wrapper').appendChild(errorDiv);
             }
-            
-            // Проверка на число (дробные разрешены)
+            // Проверка на число (строгая проверка — только цифры, точка и минус)
             function isValidNumber(str) {
                 if (str === null || str === undefined || str.trim() === '') return false;
+                
+                // Убираем пробелы в начале и конце
+                str = str.trim();
+                
+                // Заменяем запятую на точку (русская раскладка)
+                str = str.replace(',', '.');
+
+                if (!/^-?\d*\.?\d+$/.test(str)) {
+                    return false;
+            }
                 const num = parseFloat(str);
                 return !isNaN(num) && isFinite(num);
             }
-            
             // Получить название поля по атрибуту name (надёжный способ)
             function getFieldName(input) {
                 const name = input.getAttribute('name');
