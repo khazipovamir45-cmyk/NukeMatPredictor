@@ -85,6 +85,9 @@ NukeMatPredictor/
     ├── data_model.md
     ├── usecase.png
     ├── mockup.png
+    ├── conceptual_model.md
+    ├── er_diagram.jpg
+    ├── testing_checklist.md
     └── screenshots.png
 ```
 
