@@ -58,30 +58,34 @@ pip install -r requirements.txt
 ## Структура проекта
 ```
 NukeMatPredictor/
-├── app.py                 # Основной файл сайта (маршруты)
-├── database.py            # Работа с базой данных SQLite
-├── model.py               # Модель расчёта прочности
-├── run.py                 # Точка входа для запуска
-├── requirements.txt       # Зависимости Python
-├── .gitignore             # Игнорируемые файлы
-├── nuclear.materials.csv  # База данных
+├── app.py                    # Основной файл Flask (маршруты)
+├── database.py               # Работа с базой данных SQLite
+├── model.py                  # KNN-модель подбора материалов
+├── run.py                    # Точка входа для запуска
+├── requirements.txt          # Зависимости Python
+├── nuclear_materials.csv     # Исходные данные (98 материалов)
+├── scaler.pkl                # Обученный StandardScaler
+├── materials_list.pkl        # Список материалов (joblib)
+├── features.npy              # Нормализованные признаки (numpy)
+├── NukeMatPredictor.pptx     # Презентация проекта
+├── .gitignore
 ├── templates/
-│   ├── index.html         # Главная страница (лендинг)
-│   ├── form.html          # Страница с формой ввода
-│   └── result.html        # Страница с результатами
+│   ├── index.html            # Главная страница (лендинг)
+│   ├── form.html             # Страница с формой ввода
+│   └── result.html           # Страница с результатами
 ├── static/
-│   ├── style.css          # Стили для всех страниц
-│   ├── chart.js           # Скрипт для построения графика
-│   └── graph_strength_dose.html # Скрипт для тестовго графика
-    └── graph_strength_temperature.html # Скрипт для тестового графика
-└── docs/                  # Документация проекта
+│   ├── style.css             # Стили для всех страниц
+│   ├── chart.js              # Скрипт для построения графика
+│   ├── graph_strength_dose.html        # Тестовый график доза→прочность
+│   └── graph_strength_temperature.html # Тестовый график температура→прочность
+└── docs/
     ├── user_stories.md
     ├── functional_requirements.md
     ├── non_functional_requirements.md
     ├── data_model.md
-    ├── mockup.png         # Мокапы страниц
-    └── screenshots.png    # Скриншоты готового сайта
-    └── usecase.png    # Скриншоты готового сайта
+    ├── usecase.png
+    ├── mockup.png
+    └── screenshots.png
 ```
 
 ---
