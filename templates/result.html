@@ -167,10 +167,17 @@
             border-bottom: none;
         }
 
-        .highlight-row {
-            background: #1e456e;
+        /* ЕДИНЫЙ ЦВЕТ ДЛЯ ВСЕХ СТРОК ТАБЛИЦЫ — как у первой строки */
+        .materials-table tbody tr {
+            background: #0a1f33;
         }
 
+        /* Убираем старые классы цветов */
+        .optimal, .acceptable, .unsuitable {
+            /* больше не используются для фона строк */
+        }
+
+        /* Статусы текста оставляем для читаемости */
         .status-best {
             color: #6fcf97;
         }
@@ -289,7 +296,6 @@
             box-shadow: 0 0 5px rgba(30, 109, 242, 0.5);
         }
 
-        /* Стили для ошибок */
         .form-field input.error-input {
             border-color: #eb5757 !important;
         }
@@ -345,11 +351,20 @@
             gap: 10px;
             transition: 0.2s;
             border: 1px solid #5faaff;
+            text-decoration: none;
         }
 
         .recalc-btn:hover {
             background: #0e5ad8;
             transform: translateY(-2px);
+        }
+
+        .save-pdf-btn {
+            background: #2d5780;
+            border: 1px solid #5faaff;
+        }
+        .save-pdf-btn:hover {
+            background: #1e456e;
         }
 
         footer {
@@ -393,23 +408,112 @@
                 bottom: -30px;
                 font-size: 10px;
             }
-
-        }/* для подстветки таблицы */
-        .optimal {
-            background-color: #1e6f3f !important;
-            color: white;
-        }
-
-        .acceptable {
-            background-color: #7a6e1f !important;
-            color: white;
-        }
-
-        .unsuitable {
-            background-color: #6e2a2a !important;
-            color: white;
         }
         
+        /* ========== СТИЛИ ДЛЯ ПЕЧАТИ (PDF) ========== */
+        @media print {
+            .custom-header,
+            .recalc-section,
+            footer,
+            .save-pdf-btn,
+            .nav-menu,
+            .team-links,
+            .recalc-btn {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .results-page {
+                max-width: 100%;
+                background: white;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .results-content {
+                padding: 15mm !important;
+                width: 100%;
+            }
+            
+            .params-badge {
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                border: 1px solid #ddd !important;
+                backdrop-filter: none;
+                break-inside: avoid;
+            }
+            
+            .params-badge-item i {
+                color: #1e6df2 !important;
+            }
+            
+            h2 {
+                color: #222 !important;
+            }
+            
+            .table-container {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                break-inside: avoid;
+                padding: 0;
+            }
+            
+            .materials-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .materials-table th {
+                background: #e9ecef !important;
+                color: #222 !important;
+                border-bottom: 2px solid #aaa;
+            }
+            
+            .materials-table td {
+                color: #222 !important;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            /* В печати тоже единый цвет фона строк (светло-серый) */
+            .materials-table tbody tr {
+                background: #f8f9fa !important;
+            }
+            
+            .graphs-section {
+                break-inside: avoid;
+            }
+            
+            .graph-container {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .graph-title {
+                color: #222 !important;
+            }
+            
+            .graph-frame-wrapper {
+                background: white !important;
+            }
+            
+            .js-plotly-plot {
+                max-width: 100%;
+                height: auto !important;
+            }
+            
+            .table-container, .graph-container, .params-badge, .results-header {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -454,16 +558,23 @@
                         <th>Совместимость</th>
                     </tr>
                 </thead>
-                <tbody>
+                 <tbody>
                     {% for material in materials %}
-                    <tr class="{{ material.status }} {% if loop.first %}highlight-row{% endif %}">
+                    <tr>
                         <td><strong>{{ material.name }}</strong></td>
                         <td>{{ material.irradiation_dose }} dpa</td>
                         <td>{{ material.corrosion_rate }} мм/год</td>
-                        <td><span>{{ material.status_text }}</span></td>
-                    </tr>
+                        <td>
+                            {% if material.status == 'optimal' %}
+                                <span style="color: #6fcf97;">{{ material.status_text }}</span>
+                            {% elif material.status == 'acceptable' %}
+                                <span style="color: #f2c94c;">{{ material.status_text }}</span>
+                            {% else %}
+                                <span style="color: #eb5757;">{{ material.status_text }}</span>
+                            {% endif %}
+                         </td>
+                     </tr>
                     {% endfor %}
-
                 </tbody>
             </table>
         </div>
@@ -482,44 +593,47 @@
                 <div class="graph-frame-wrapper" id="graph2"></div>
             </div>
         </div>
+    </div>
 
-        <!-- форма перерасчета -->
-        <div class="recalc-section">
-            <div class="recalc-title">
-                <i class="fas fa-sliders-h"></i> Пересчитать подбор
-            </div>
-            <form action="/result" method="POST" id="recalcForm">
-                <div class="form-grid">
-                    <div class="form-field">
-                        <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
-                        <input type="text" name="temperature" value="{{ temperature }}" required>
-                    </div>
-                    <div class="form-field">
-                        <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
-                        <input type="text" name="dose" value="{{ dose }}" required>
-                    </div>
-                    <div class="form-field">
-                        <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
-                        <input type="text" name="strength" value="{{ strength }}" required>
-                    </div>
-                    <div class="form-field">
-                        <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
-                        <input type="text" name="thermal_cond" value="{{ thermal_cond }}" required>
-                    </div>
-                    <div class="form-field">
-                        <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
-                        <input type="text" name="heat_capacity" value="{{ heat_capacity }}" required>
-                    </div>
+    <div class="recalc-section">
+        <div class="recalc-title">
+            <i class="fas fa-sliders-h"></i> Пересчитать подбор
+        </div>
+        <form action="/result" method="POST" id="recalcForm">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
+                    <input type="text" name="temperature" value="{{ temperature }}" required>
                 </div>
-                <button type="submit" class="recalc-btn">
-                    <i class="fas fa-sync-alt"></i> Выполнить пересчёт
-                </button>
-            </form> 
-            <!--кнопка новый расчет с ссылкой на форм  -->
-            <div style="margin-top: 25px; text-align: center; padding-top: 20px; border-top: 1px solid #265177;">
-                <a href="/form" class="recalc-btn" style="background: #2d5780; border-color: #5faaff; text-decoration: none;">
-                    <i class="fas fa-plus-circle"></i> Новый расчёт
-                </a>
+                <div class="form-field">
+                    <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
+                    <input type="text" name="dose" value="{{ dose }}" required>
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
+                    <input type="text" name="strength" value="{{ strength }}" required>
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
+                    <input type="text" name="thermal_cond" value="{{ thermal_cond }}" required>
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
+                    <input type="text" name="heat_capacity" value="{{ heat_capacity }}" required>
+                </div>
+            </div>
+            <button type="submit" class="recalc-btn">
+                <i class="fas fa-sync-alt"></i> Выполнить пересчёт
+            </button>
+        </form>
+        
+        <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <button id="printPdfBtn" class="recalc-btn save-pdf-btn">
+                <i class="fas fa-file-pdf"></i> Сохранить отчёт (PDF)
+            </button>
+            <a href="/form" class="recalc-btn" style="background: #2d5780; border-color: #5faaff; text-decoration: none;">
+                <i class="fas fa-plus-circle"></i> Новый расчёт
+            </a>
         </div>
     </div>
 
@@ -541,48 +655,53 @@
     const doseGraphData = {{ dose_graph|safe}};
     const materialName = "{{ optimal_material_name }}";
     
-    if (tempGraphData && tempGraphData.x && tempGraphData.y) {
-        Plotly.newPlot('graph1', [{
-            x: tempGraphData.x,
-            y: tempGraphData.y,
-            mode: 'lines',
-            type: 'scatter',
-            line: { color: '#7bc9ff', width: 3 },
-            name: 'Прочность'
-        }], {
-            title: materialName,
-            xaxis: { title: 'Температура (°C)', gridcolor: '#265177', color: 'white' },
-            yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
-            paper_bgcolor: '#0a1f33',
-            plot_bgcolor: '#0a1f33',
-            font: { color: 'white' }
-        });
+    function renderGraphs() {
+        if (tempGraphData && tempGraphData.x && tempGraphData.y) {
+            Plotly.newPlot('graph1', [{
+                x: tempGraphData.x,
+                y: tempGraphData.y,
+                mode: 'lines',
+                type: 'scatter',
+                line: { color: '#7bc9ff', width: 3 },
+                name: 'Прочность'
+            }], {
+                title: materialName,
+                xaxis: { title: 'Температура (°C)', gridcolor: '#265177', color: 'white' },
+                yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
+                paper_bgcolor: '#0a1f33',
+                plot_bgcolor: '#0a1f33',
+                font: { color: 'white' },
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            });
+        }
+        
+        if (doseGraphData && doseGraphData.x && doseGraphData.y) {
+            Plotly.newPlot('graph2', [{
+                x: doseGraphData.x,
+                y: doseGraphData.y,
+                mode: 'lines',
+                type: 'scatter',
+                line: { color: '#f2c94c', width: 3 },
+                name: 'Прочность'
+            }], {
+                title: materialName,
+                xaxis: { title: 'Доза облучения (dpa)', gridcolor: '#265177', color: 'white' },
+                yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
+                paper_bgcolor: '#0a1f33',
+                plot_bgcolor: '#0a1f33',
+                font: { color: 'white' },
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            });
+        }
     }
     
-    if (doseGraphData && doseGraphData.x && doseGraphData.y) {
-        Plotly.newPlot('graph2', [{
-            x: doseGraphData.x,
-            y: doseGraphData.y,
-            mode: 'lines',
-            type: 'scatter',
-            line: { color: '#f2c94c', width: 3 },
-            name: 'Прочность'
-        }], {
-            title: materialName,
-            xaxis: { title: 'Доза облучения (dpa)', gridcolor: '#265177', color: 'white' },
-            yaxis: { title: 'Прочность (МПа)', gridcolor: '#265177', color: 'white' },
-            paper_bgcolor: '#0a1f33',
-            plot_bgcolor: '#0a1f33',
-            font: { color: 'white' }
-        });
-    }
+    renderGraphs();
 
-    // ВАЛИДАЦИЯ ФОРМЫ ПЕРЕСЧЁТА
+    // ВАЛИДАЦИЯ ФОРМЫ
     (function() {
         const form = document.getElementById('recalcForm');
         const inputs = form.querySelectorAll('.form-field input');
         
-        // Удаление ошибки
         function removeError(input) {
             const field = input.closest('.form-field');
             const existingError = field.querySelector('.field-error');
@@ -590,36 +709,23 @@
             input.classList.remove('error-input');
         }
         
-        // Показ ошибки
         function showError(input, message) {
             removeError(input);
             input.classList.add('error-input');
-            
             const errorDiv = document.createElement('div');
             errorDiv.className = 'field-error';
             errorDiv.textContent = message;
             input.closest('.form-field').appendChild(errorDiv);
         }
         
-        // Проверка на число (дробные разрешены)
         function isValidNumber(str) {
             if (str === null || str === undefined || str.trim() === '') return false;
-            
-            // Убираем пробелы в начале и конце
-            str = str.trim();
-            
-            // Заменяем запятую на точку (русская раскладка)
-            str = str.replace(',', '.');
-            
-            if (!/^-?\d*\.?\d+$/.test(str)) {
-                return false;
-            }
-            
+            str = str.trim().replace(',', '.');
+            if (!/^-?\d*\.?\d+$/.test(str)) return false;
             const num = parseFloat(str);
             return !isNaN(num) && isFinite(num);
         }
         
-        // ВАЖНО: Упрощённое получение названия поля по атрибуту name
         function getFieldName(input) {
             const name = input.getAttribute('name');
             switch(name) {
@@ -632,95 +738,73 @@
             }
         }
         
-        // Валидация поля
         function validateField(input, fieldName) {
             const value = input.value;
-            
-            // Проверка на пустое поле
             if (value.trim() === '') {
                 showError(input, 'Заполните поле');
                 return false;
             }
-            
-            // Проверка на число
             if (!isValidNumber(value)) {
-                const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
-                showError(input, `"${displayValue}" — не число`);
+                showError(input, 'Введите число');
                 return false;
             }
-            
             const num = parseFloat(value);
-            
-            // Для температуры можно отрицательные значения (криогенные температуры)
             if (fieldName === 'Температура') {
-                if (num < -273.15) {
-                    showError(input, 'Температура не может быть ниже -273.15°C');
-                    return false;
-                }
-                if (num > 5000) {
-                    showError(input, 'Слишком высокая температура (максимум 5000°C)');
-                    return false;
-                }
+                if (num < -273.15) { showError(input, 'T ≥ -273.15°C'); return false; }
+                if (num > 5000) { showError(input, 'T ≤ 5000°C'); return false; }
             }
-            
-            // Доза облучения не может быть отрицательной
             if (fieldName === 'Доза облучения' && num < 0) {
-                showError(input, 'Доза облучения не может быть отрицательной');
+                showError(input, 'Доза ≥ 0');
                 return false;
             }
-            
-            // Прочность должна быть больше 0
             if (fieldName === 'Мин прочность' && num <= 0) {
-                showError(input, 'Прочность должна быть больше 0 МПа');
+                showError(input, 'Прочность > 0');
                 return false;
             }
-            
-            // Теплопроводность должна быть больше 0
             if (fieldName === 'Теплопроводность' && num <= 0) {
-                showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
+                showError(input, 'Теплопроводность > 0');
                 return false;
             }
-            
-            
-            
             removeError(input);
             return true;
         }
         
-        // Навешиваем события на поля
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const fieldName = getFieldName(this);
-                validateField(this, fieldName);
-            });
-            
-            input.addEventListener('blur', function() {
-                const fieldName = getFieldName(this);
-                validateField(this, fieldName);
-            });
+            input.addEventListener('input', function() { validateField(this, getFieldName(this)); });
+            input.addEventListener('blur', function() { validateField(this, getFieldName(this)); });
         });
         
-        // Валидация перед отправкой
         form.addEventListener('submit', function(e) {
             let allValid = true;
-            
-            inputs.forEach(input => {
-                const fieldName = getFieldName(input);
-                if (!validateField(input, fieldName)) {
-                    allValid = false;
-                }
-            });
-            
+            inputs.forEach(input => { if (!validateField(input, getFieldName(input))) allValid = false; });
             if (!allValid) {
                 e.preventDefault();
                 const firstError = document.querySelector('.error-input');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstError.focus();
-                }
+                if (firstError) { firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstError.focus(); }
             }
         });
     })();
+
+    // ГЕНЕРАЦИЯ PDF ЧЕРЕЗ PRINT
+    const printPdfBtn = document.getElementById('printPdfBtn');
+    if (printPdfBtn) {
+        printPdfBtn.addEventListener('click', function() {
+            const originalTitle = document.title;
+            document.title = 'material_report_data';
+            
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Подготовка PDF...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                window.print();
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                document.title = originalTitle;
+            }, 500);
+        });
+    }
 </script>
 </body>
 </html>
