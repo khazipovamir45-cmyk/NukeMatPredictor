@@ -1,1 +1,7 @@
 Flask==2.3.3
+joblib
+numpy
+scikit-learn
+pandas
+openpyxl
+gunicorn
