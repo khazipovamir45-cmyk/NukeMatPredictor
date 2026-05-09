@@ -1,7 +1,7 @@
 import joblib
 import math
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+import os
 
 scaler = None
 materials_list = None
@@ -10,10 +10,16 @@ features_normal = None
 
 def load_knn_data():
     global scaler, materials_list, features_normal
-    scaler = joblib.load(
-        "scaler.pkl")  # использую joblib, потому что в prepare  я превращал питоновский объект в файл с помощью этой библиотеки
-    materials_list = joblib.load("materials_list.pkl")
-    features_normal = np.load("features.npy")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Строим полные пути
+    scaler_path = os.path.join(base_dir, "scaler.pkl")
+    materials_path = os.path.join(base_dir, "materials_list.pkl")
+    features_path = os.path.join(base_dir, "features.npy")
+    
+    scaler = joblib.load(scaler_path)
+    materials_list = joblib.load(materials_path)
+    features_normal = np.load(features_path)
 
 
 def find_nearest(query, k=5):

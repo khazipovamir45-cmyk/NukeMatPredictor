@@ -514,18 +514,27 @@ input[type=number] {
 
 /* Адаптивность для телефонов */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
     nav {
         flex-direction: column;
         padding: 15px 20px;
     }
     
     .nav-menu {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
         width: 100%;
+        gap: 10px;
     }
     
     .nav-menu a {
         justify-content: center;
+        padding: 6px 12px;
+        font-size: 13px;
     }
     
     .hero, .audience, .about, footer {
@@ -533,7 +542,11 @@ input[type=number] {
     }
     
     h1 {
-        font-size: 36px;
+        font-size: 32px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
     }
     
     .audience-grid {
@@ -551,6 +564,7 @@ input[type=number] {
     
     .team-links {
         justify-content: center;
+        flex-wrap: wrap;
     }
     
     .form-page {
@@ -573,4 +587,26 @@ input[type=number] {
     .form-page h2 {
         font-size: 28px;
     }
-} 
+    
+    /* Дополнительные фиксы для телефонов */
+    .btn {
+        padding: 12px 24px;
+        font-size: 16px;
+        display: block;
+        text-align: center;
+    }
+    
+    .input-wrapper input,
+    .input-wrapper select {
+        font-size: 16px; /* Предотвращает автоматическое увеличение на iPhone */
+    }
+    
+    .submit-btn {
+        padding: 14px;
+        font-size: 16px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+}
