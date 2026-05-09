@@ -79,15 +79,18 @@
         <section class="form-page">
             <h2>Введите параметры</h2>
             <div class="form-container">
-                <form action="/result" method="POST" id="calculationForm">
+                <!-- Добавлен autocomplete="off" к форме -->
+                <form action="/result" method="POST" id="calculationForm" autocomplete="off">
                     <div class="form-group">
                         <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-fire"></i>
+                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="temperature" 
                                    value="850" 
-                                   required>
+                                   required
+                                   autocomplete="off">
                         </div>
                     </div>
 
@@ -95,10 +98,12 @@
                         <label><i class="fas fa-bolt"></i> Доза облучения (dpa)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-radiation"></i>
+                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="dose" 
                                    value="12.5" 
-                                   required>
+                                   required
+                                   autocomplete="off">
                         </div>
                     </div>
 
@@ -106,10 +111,12 @@
                         <label><i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-weight-hanging"></i>
+                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="strength" 
                                    value="450" 
-                                   required>
+                                   required
+                                   autocomplete="off">
                         </div>
                     </div>
 
@@ -117,10 +124,12 @@
                         <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-line"></i>
+                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="thermal_cond" 
                                    value="15.5" 
-                                   required>
+                                   required
+                                   autocomplete="off">
                         </div>
                     </div>
 
@@ -128,10 +137,12 @@
                         <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-simple"></i>
+                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="heat_capacity" 
                                    value="500" 
-                                   required>
+                                   required
+                                   autocomplete="off">
                         </div>
                     </div>
 
