@@ -63,7 +63,7 @@ NukeMatPredictor/
 ├── model.py                  # KNN-модель подбора материалов
 ├── run.py                    # Точка входа для запуска
 ├── requirements.txt          # Зависимости Python
-├── nuclear_materials.csv     # Исходные данные (98 материалов)
+├── nuclear_materials.csv     # Исходные данные (200 материалов)
 ├── scaler.pkl                # Обученный StandardScaler
 ├── materials_list.pkl        # Список материалов (joblib)
 ├── features.npy              # Нормализованные признаки (numpy)
