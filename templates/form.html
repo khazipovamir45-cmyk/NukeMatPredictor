@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <style>
-        /* Только стили для подсказок — не трогаем остальной дизайн */
+        /* Стили для подсказок */
         .form-group {
             position: relative;
         }
@@ -79,13 +79,11 @@
         <section class="form-page">
             <h2>Введите параметры</h2>
             <div class="form-container">
-                <!-- Добавлен autocomplete="off" к форме -->
                 <form action="/result" method="POST" id="calculationForm" autocomplete="off">
                     <div class="form-group">
                         <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-fire"></i>
-                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="temperature" 
                                    value="850" 
@@ -98,7 +96,6 @@
                         <label><i class="fas fa-bolt"></i> Доза облучения (dpa)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-radiation"></i>
-                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="dose" 
                                    value="12.5" 
@@ -111,7 +108,6 @@
                         <label><i class="fas fa-hammer"></i> Минимально требуемая прочность (МПа)</label>
                         <div class="input-wrapper">
                             <i class="fas fa-weight-hanging"></i>
-                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="strength" 
                                    value="450" 
@@ -124,7 +120,6 @@
                         <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-line"></i>
-                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="thermal_cond" 
                                    value="15.5" 
@@ -137,7 +132,6 @@
                         <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
                         <div class="input-wrapper">
                             <i class="fas fa-chart-simple"></i>
-                            <!-- Добавлен autocomplete="off" к полю -->
                             <input type="text" 
                                    name="heat_capacity" 
                                    value="500" 
@@ -190,23 +184,22 @@
                 errorDiv.textContent = message;
                 input.closest('.input-wrapper').appendChild(errorDiv);
             }
+            
             // Проверка на число (строгая проверка — только цифры, точка и минус)
             function isValidNumber(str) {
                 if (str === null || str === undefined || str.trim() === '') return false;
                 
-                // Убираем пробелы в начале и конце
                 str = str.trim();
-                
-                // Заменяем запятую на точку (русская раскладка)
-                str = str.replace(',', '.');
+                str = str.replace(',', '.'); // заменяем запятую на точку
 
                 if (!/^-?\d*\.?\d+$/.test(str)) {
                     return false;
-            }
+                }
                 const num = parseFloat(str);
                 return !isNaN(num) && isFinite(num);
             }
-            // Получить название поля по атрибуту name (надёжный способ)
+            
+            // Получить название поля по атрибуту name
             function getFieldName(input) {
                 const name = input.getAttribute('name');
                 switch(name) {
@@ -219,7 +212,7 @@
                 }
             }
             
-            // Валидация одного поля
+            // Валидация одного поля с ограничениями для всех параметров
             function validateInput(input) {
                 const value = input.value;
                 const fieldName = getFieldName(input);
@@ -239,39 +232,75 @@
                 
                 const num = parseFloat(value);
                 
-                // Для температуры можно отрицательные значения (криогенные температуры)
+                // ============ ТЕМПЕРАТУРА ============
                 if (fieldName === 'Температура') {
                     if (num < -273.15) {
                         showError(input, 'Температура не может быть ниже -273.15°C');
                         return false;
                     }
                     if (num > 5000) {
-                        showError(input, 'Слишком высокая температура (максимум 5000°C)');
+                        showError(input, 'Температура не может превышать 5000°C');
                         return false;
                     }
                     removeError(input);
                     return true;
                 }
                 
-                // Доза облучения не может быть отрицательной
-                if (fieldName === 'Доза облучения' && num < 0) {
-                    showError(input, 'Доза облучения не может быть отрицательной');
-                    return false;
+                // ============ ДОЗА ОБЛУЧЕНИЯ ============
+                if (fieldName === 'Доза облучения') {
+                    if (num < 0) {
+                        showError(input, 'Доза облучения не может быть отрицательной');
+                        return false;
+                    }
+                    if (num > 200) {
+                        showError(input, 'Доза облучения не может превышать 200 dpa');
+                        return false;
+                    }
+                    removeError(input);
+                    return true;
                 }
                 
-                // Прочность должна быть больше 0
-                if (fieldName === 'Прочность' && num <= 0) {
-                    showError(input, 'Прочность должна быть больше 0 МПа');
-                    return false;
+                // ============ ПРОЧНОСТЬ ============
+                if (fieldName === 'Прочность') {
+                    if (num <= 0) {
+                        showError(input, 'Прочность должна быть больше 0 МПа');
+                        return false;
+                    }
+                    if (num > 2000) {
+                        showError(input, 'Прочность не может превышать 2000 МПа');
+                        return false;
+                    }
+                    removeError(input);
+                    return true;
                 }
                 
-                // Теплопроводность должна быть больше 0
-                if (fieldName === 'Теплопроводность' && num <= 0) {
-                    showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
-                    return false;
+                // ============ ТЕПЛОПРОВОДНОСТЬ ============
+                if (fieldName === 'Теплопроводность') {
+                    if (num <= 0) {
+                        showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
+                        return false;
+                    }
+                    if (num > 500) {
+                        showError(input, 'Теплопроводность не может превышать 500 Вт/(м·К)');
+                        return false;
+                    }
+                    removeError(input);
+                    return true;
                 }
                 
-                
+                // ============ ТЕПЛОЁМКОСТЬ ============
+                if (fieldName === 'Теплоёмкость') {
+                    if (num <= 0) {
+                        showError(input, 'Теплоёмкость должна быть больше 0 Дж/(кг·К)');
+                        return false;
+                    }
+                    if (num > 5000) {
+                        showError(input, 'Теплоёмкость не может превышать 5000 Дж/(кг·К)');
+                        return false;
+                    }
+                    removeError(input);
+                    return true;
+                }
                 
                 removeError(input);
                 return true;
