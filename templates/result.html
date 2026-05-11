@@ -167,17 +167,10 @@
             border-bottom: none;
         }
 
-        /* ЕДИНЫЙ ЦВЕТ ДЛЯ ВСЕХ СТРОК ТАБЛИЦЫ — как у первой строки */
         .materials-table tbody tr {
             background: #0a1f33;
         }
 
-        /* Убираем старые классы цветов */
-        .optimal, .acceptable, .unsuitable {
-            /* больше не используются для фона строк */
-        }
-
-        /* Статусы текста оставляем для читаемости */
         .status-best {
             color: #6fcf97;
         }
@@ -391,109 +384,89 @@
         }
 
         @media (max-width: 768px) {
-    .results-content {
-        padding: 20px 15px;
-    }
-    
-    h2 {
-        font-size: 24px;
-    }
-    
-    .graph-container {
-        min-width: 100%;
-    }
-    
-    .form-field label {
-        white-space: normal;
-        font-size: 12px;
-    }
-    
-    .field-error {
-        white-space: normal;
-        bottom: -30px;
-        font-size: 10px;
-    }
-    
-    .custom-header {
-        padding: 15px 20px;
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .nav-menu {
-        justify-content: center;
-        gap: 10px;
-    }
-    
-    .nav-menu a {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-    
-    .params-badge {
-        font-size: 11px;
-        padding: 8px 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-    }
-    
-    .params-badge-item {
-        font-size: 11px;
-    }
-    
-    .results-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .recalc-section {
-        padding: 20px;
-    }
-    
-    .recalc-title {
-        font-size: 18px;
-    }
-    
-    .recalc-btn, .save-pdf-btn {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-    
-    .table-container {
-        overflow-x: auto;
-    }
-    
-    .materials-table {
-        min-width: 500px;
-    }
-    
-    .materials-table th,
-    .materials-table td {
-        padding: 10px 8px;
-        font-size: 13px;
-    }
-    
-    footer {
-        padding: 15px 20px;
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .team-links {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-}
+            .results-content {
+                padding: 20px 15px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            .graph-container {
+                min-width: 100%;
+            }
+            .form-field label {
+                white-space: normal;
+                font-size: 12px;
+            }
+            .field-error {
+                white-space: normal;
+                bottom: -30px;
+                font-size: 10px;
+            }
+            .custom-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-menu {
+                justify-content: center;
+                gap: 10px;
+            }
+            .nav-menu a {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .params-badge {
+                font-size: 11px;
+                padding: 8px 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            .params-badge-item {
+                font-size: 11px;
+            }
+            .results-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .recalc-section {
+                padding: 20px;
+            }
+            .recalc-title {
+                font-size: 18px;
+            }
+            .recalc-btn, .save-pdf-btn {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            .materials-table {
+                min-width: 500px;
+            }
+            .materials-table th,
+            .materials-table td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+            footer {
+                padding: 15px 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .team-links {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
         
-        /* ========== СТИЛИ ДЛЯ ПЕЧАТИ (PDF) ========== */
         @media print {
             .custom-header,
             .recalc-section,
@@ -504,13 +477,11 @@
             .recalc-btn {
                 display: none !important;
             }
-            
             body {
                 background: white;
                 padding: 0;
                 margin: 0;
             }
-            
             .results-page {
                 max-width: 100%;
                 background: white;
@@ -519,12 +490,10 @@
                 margin: 0;
                 padding: 0;
             }
-            
             .results-content {
                 padding: 15mm !important;
                 width: 100%;
             }
-            
             .params-badge {
                 background: #f5f5f5 !important;
                 color: #333 !important;
@@ -532,67 +501,53 @@
                 backdrop-filter: none;
                 break-inside: avoid;
             }
-            
             .params-badge-item i {
                 color: #1e6df2 !important;
             }
-            
             h2 {
                 color: #222 !important;
             }
-            
             .table-container {
                 background: white !important;
                 border: 1px solid #ccc !important;
                 break-inside: avoid;
                 padding: 0;
             }
-            
             .materials-table {
                 width: 100%;
                 border-collapse: collapse;
             }
-            
             .materials-table th {
                 background: #e9ecef !important;
                 color: #222 !important;
                 border-bottom: 2px solid #aaa;
             }
-            
             .materials-table td {
                 color: #222 !important;
                 border-bottom: 1px solid #ddd;
             }
-            
-            /* В печати тоже единый цвет фона строк (светло-серый) */
             .materials-table tbody tr {
                 background: #f8f9fa !important;
             }
-            
             .graphs-section {
                 break-inside: avoid;
             }
-            
             .graph-container {
                 background: white !important;
                 border: 1px solid #ccc !important;
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
-            
             .graph-title {
                 color: #222 !important;
             }
-            
             .graph-frame-wrapper {
                 background: white !important;
             }
-            
             .js-plotly-plot {
                 max-width: 100%;
                 height: auto !important;
             }
-            
             .table-container, .graph-container, .params-badge, .results-header {
                 page-break-inside: avoid;
             }
@@ -641,7 +596,7 @@
                         <th>Совместимость</th>
                     </tr>
                 </thead>
-                 <tbody>
+                <tbody>
                     {% for material in materials %}
                     <tr>
                         <td><strong>{{ material.name }}</strong></td>
@@ -655,8 +610,8 @@
                             {% else %}
                                 <span style="color: #eb5757;">{{ material.status_text }}</span>
                             {% endif %}
-                         </td>
-                     </tr>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -686,23 +641,23 @@
             <div class="form-grid">
                 <div class="form-field">
                     <label><i class="fas fa-thermometer-half"></i> Температура (°C)</label>
-                    <input type="text" name="temperature" value="{{ temperature }}" required>
+                    <input type="text" name="temperature" value="{{ temperature }}" required autocomplete="off">
                 </div>
                 <div class="form-field">
                     <label><i class="fas fa-radiation"></i> Доза облучения (dpa)</label>
-                    <input type="text" name="dose" value="{{ dose }}" required>
+                    <input type="text" name="dose" value="{{ dose }}" required autocomplete="off">
                 </div>
                 <div class="form-field">
                     <label><i class="fas fa-hammer"></i> Мин. прочность (МПа)</label>
-                    <input type="text" name="strength" value="{{ strength }}" required>
+                    <input type="text" name="strength" value="{{ strength }}" required autocomplete="off">
                 </div>
                 <div class="form-field">
                     <label><i class="fas fa-fire-alt"></i> Теплопроводность (Вт/(м·К))</label>
-                    <input type="text" name="thermal_cond" value="{{ thermal_cond }}" required>
+                    <input type="text" name="thermal_cond" value="{{ thermal_cond }}" required autocomplete="off">
                 </div>
                 <div class="form-field">
                     <label><i class="fas fa-temperature-high"></i> Теплоёмкость (Дж/(кг·К))</label>
-                    <input type="text" name="heat_capacity" value="{{ heat_capacity }}" required>
+                    <input type="text" name="heat_capacity" value="{{ heat_capacity }}" required autocomplete="off">
                 </div>
             </div>
             <button type="submit" class="recalc-btn">
@@ -780,7 +735,7 @@
     
     renderGraphs();
 
-    // ВАЛИДАЦИЯ ФОРМЫ
+    // ============ ПОЛНАЯ ВАЛИДАЦИЯ ФОРМЫ С ОГРАНИЧЕНИЯМИ ============
     (function() {
         const form = document.getElementById('recalcForm');
         const inputs = form.querySelectorAll('.form-field input');
@@ -823,47 +778,117 @@
         
         function validateField(input, fieldName) {
             const value = input.value;
+            
+            // Пустое поле
             if (value.trim() === '') {
                 showError(input, 'Заполните поле');
                 return false;
             }
+            
+            // Проверка на число
             if (!isValidNumber(value)) {
-                showError(input, 'Введите число');
+                const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
+                showError(input, `"${displayValue}" — не число`);
                 return false;
             }
+            
             const num = parseFloat(value);
+            
+            // ============ ТЕМПЕРАТУРА ============
             if (fieldName === 'Температура') {
-                if (num < -273.15) { showError(input, 'T ≥ -273.15°C'); return false; }
-                if (num > 5000) { showError(input, 'T ≤ 5000°C'); return false; }
+                if (num < -273.15) {
+                    showError(input, 'Температура не может быть ниже -273.15°C');
+                    return false;
+                }
+                if (num > 5000) {
+                    showError(input, 'Температура не может превышать 5000°C');
+                    return false;
+                }
+                removeError(input);
+                return true;
             }
-            if (fieldName === 'Доза облучения' && num < 0) {
-                showError(input, 'Доза ≥ 0');
-                return false;
+            
+            // ============ ДОЗА ОБЛУЧЕНИЯ ============
+            if (fieldName === 'Доза облучения') {
+                if (num < 0) {
+                    showError(input, 'Доза облучения не может быть отрицательной');
+                    return false;
+                }
+                if (num > 200) {
+                    showError(input, 'Доза облучения не может превышать 200 dpa');
+                    return false;
+                }
+                removeError(input);
+                return true;
             }
-            if (fieldName === 'Мин прочность' && num <= 0) {
-                showError(input, 'Прочность > 0');
-                return false;
+            
+            // ============ МИН. ПРОЧНОСТЬ ============
+            if (fieldName === 'Мин прочность') {
+                if (num <= 0) {
+                    showError(input, 'Прочность должна быть больше 0 МПа');
+                    return false;
+                }
+                if (num > 2000) {
+                    showError(input, 'Прочность не может превышать 2000 МПа');
+                    return false;
+                }
+                removeError(input);
+                return true;
             }
-            if (fieldName === 'Теплопроводность' && num <= 0) {
-                showError(input, 'Теплопроводность > 0');
-                return false;
+            
+            // ============ ТЕПЛОПРОВОДНОСТЬ ============
+            if (fieldName === 'Теплопроводность') {
+                if (num <= 0) {
+                    showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
+                    return false;
+                }
+                if (num > 500) {
+                    showError(input, 'Теплопроводность не может превышать 500 Вт/(м·К)');
+                    return false;
+                }
+                removeError(input);
+                return true;
             }
+            
+            // ============ ТЕПЛОЁМКОСТЬ ============
+            if (fieldName === 'Теплоёмкость') {
+                if (num <= 0) {
+                    showError(input, 'Теплоёмкость должна быть больше 0 Дж/(кг·К)');
+                    return false;
+                }
+                if (num > 5000) {
+                    showError(input, 'Теплоёмкость не может превышать 5000 Дж/(кг·К)');
+                    return false;
+                }
+                removeError(input);
+                return true;
+            }
+            
             removeError(input);
             return true;
         }
         
         inputs.forEach(input => {
-            input.addEventListener('input', function() { validateField(this, getFieldName(this)); });
-            input.addEventListener('blur', function() { validateField(this, getFieldName(this)); });
+            input.addEventListener('input', function() { 
+                validateField(this, getFieldName(this)); 
+            });
+            input.addEventListener('blur', function() { 
+                validateField(this, getFieldName(this)); 
+            });
         });
         
         form.addEventListener('submit', function(e) {
             let allValid = true;
-            inputs.forEach(input => { if (!validateField(input, getFieldName(input))) allValid = false; });
+            inputs.forEach(input => { 
+                if (!validateField(input, getFieldName(input))) allValid = false; 
+            });
             if (!allValid) {
                 e.preventDefault();
                 const firstError = document.querySelector('.error-input');
-                if (firstError) { firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstError.focus(); }
+                if (firstError) { 
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+                    firstError.focus(); 
+                }
             }
         });
     })();
