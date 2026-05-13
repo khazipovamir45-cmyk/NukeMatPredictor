@@ -6,6 +6,7 @@
     <title>NukeMatPredictor - Рекомендации</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -893,24 +894,34 @@
         });
     })();
 
-    // ГЕНЕРАЦИЯ PDF ЧЕРЕЗ PRINT
+    // ГЕНЕРАЦИЯ PDF ЧЕРЕЗ html2pdf
     const printPdfBtn = document.getElementById('printPdfBtn');
     if (printPdfBtn) {
         printPdfBtn.addEventListener('click', function() {
-            const originalTitle = document.title;
-            document.title = 'material_report_data';
-            
             const btn = this;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Подготовка PDF...';
             btn.disabled = true;
             
-            setTimeout(() => {
-                window.print();
+            // Элемент для экспорта
+            const element = document.querySelector('.results-page');
+            
+            const opt = {
+                margin: 10,
+                filename: 'material_report_' + new Date().getTime() + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                document.title = originalTitle;
-            }, 500);
+            }).catch(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert('Ошибка при создании PDF');
+            });
         });
     }
 </script>
