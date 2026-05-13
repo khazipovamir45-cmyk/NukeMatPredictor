@@ -85,40 +85,66 @@ def result():
 @app.route('/save-pdf', methods=['POST'])
 def save_pdf():
     """
-    Сохранить PDF отчета (работает везде включая Telegram)
-    Используется для Telegram WebApp где window.print() не работает
+    Генерация качественного PDF на стороне сервера.
+    Использование request.form вместо request.json для совместимости с мобильными браузерами.
     """
     try:
-        # Получаем HTML контент со страницы
-        data = request.json
-        html_content = data.get('html', '')
+        # Получаем HTML контент. Используем .form, так как это надежнее для скачивания файлов
+        html_content = request.form.get('html', '')
         
         if not html_content:
-            return {'error': 'Нет контента для сохранения'}, 400
+            return 'Нет контента для сохранения', 400
         
-        # Проверяем наличие WeasyPrint
         try:
-            from weasyprint import HTML
+            from weasyprint import HTML, CSS
             
-            # Создаём PDF из HTML
-            pdf = HTML(string=html_content).write_pdf()
+            # Оборачиваем контент в базовую структуру с поддержкой UTF-8
+            full_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    @page {{ size: A4; margin: 10mm; }}
+                    body {{ font-family: 'Inter', sans-serif; color: #000; background: #fff !important; margin: 0; padding: 0; }}
+                    .results-content {{ padding: 20px; }}
+                    .results-page {{ background: #fff !important; border: none !important; box-shadow: none !important; }}
+                    .table-container {{ border: 1px solid #ccc !important; background: #fff !important; padding: 10px; border-radius: 10px; margin-bottom: 20px; }}
+                    .materials-table {{ width: 100%; border-collapse: collapse; }}
+                    .materials-table th {{ background: #1e6df2 !important; color: #fff !important; padding: 10px; text-align: left; }}
+                    .materials-table td {{ color: #000 !important; border-bottom: 1px solid #eee; padding: 10px; }}
+                    .params-badge {{ background: #f0f4f8 !important; color: #000 !important; border: 1px solid #1e6df2 !important; border-radius: 8px; padding: 10px; display: inline-block; margin-bottom: 20px; }}
+                    .graph-container {{ border: 1px solid #eee !important; margin-bottom: 20px; break-inside: avoid; padding: 15px; border-radius: 10px; }}
+                    .graph-title {{ font-weight: bold; margin-bottom: 10px; color: #1e6df2; }}
+                    .graph-frame-wrapper {{ background: #f9f9f9; border: 1px solid #ddd; height: 300px; }}
+                    h2 {{ color: #1e6df2; margin-bottom: 20px; }}
+                    /* Скрываем кнопки и лишние элементы в PDF */
+                    .recalc-section, .custom-header, footer, .recalc-btn, .nav-menu {{ display: none !important; }}
+                </style>
+            </head>
+            <body>
+                <div class="results-content">
+                    {html_content}
+                </div>
+            </body>
+            </html>
+            """
+            
+            # Генерация PDF в памяти
+            pdf_file = HTML(string=full_html).write_pdf()
             
             return send_file(
-                BytesIO(pdf),
+                BytesIO(pdf_file),
                 mimetype='application/pdf',
                 as_attachment=True,
-                download_name='material_report.pdf'
+                download_name=f'material_report_{os.urandom(3).hex()}.pdf'
             )
+            
         except ImportError:
-            # Если WeasyPrint не установлен, используем альтернативный метод
-            # Возвращаем HTML для обработки на клиенте
-            return {
-                'error': 'Сервер не настроен для генерации PDF',
-                'fallback': True
-            }, 400
+            return 'Ошибка: На сервере не установлен WeasyPrint для генерации PDF', 500
             
     except Exception as e:
-        return {'error': str(e)}, 500
+        return str(e), 500
 
 
 @app.route('/download_xlsx')
