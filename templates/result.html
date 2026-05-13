@@ -506,44 +506,46 @@
                 color: #1e6df2 !important;
             }
             h2 {
-                color: #222 !important;
+                color: white !important;
+                page-break-after: avoid;
             }
             .table-container {
-                background: white !important;
-                border: 1px solid #ccc !important;
+                background: #112c48 !important;
+                border: 1px solid #265177 !important;
                 break-inside: avoid;
-                padding: 0;
+                padding: 20px;
             }
             .materials-table {
                 width: 100%;
                 border-collapse: collapse;
             }
             .materials-table th {
-                background: #e9ecef !important;
-                color: #222 !important;
-                border-bottom: 2px solid #aaa;
+                background: #0a1f33 !important;
+                color: #7bc9ff !important;
+                border-bottom: 2px solid #265177;
             }
             .materials-table td {
-                color: #222 !important;
-                border-bottom: 1px solid #ddd;
+                color: white !important;
+                border-bottom: 1px solid #265177;
+                background: #0a1f33 !important;
             }
             .materials-table tbody tr {
-                background: #f8f9fa !important;
+                background: #0a1f33 !important;
             }
             .graphs-section {
                 break-inside: avoid;
             }
             .graph-container {
-                background: white !important;
-                border: 1px solid #ccc !important;
+                background: #112c48 !important;
+                border: 1px solid #265177 !important;
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
             .graph-title {
-                color: #222 !important;
+                color: white !important;
             }
             .graph-frame-wrapper {
-                background: white !important;
+                background: #0a1f33 !important;
             }
             .js-plotly-plot {
                 max-width: 100%;
@@ -894,7 +896,7 @@
         });
     })();
 
-    // СОХРАНЕНИЕ PDF - РАБОТАЕТ ВЕЗДЕ (браузер + Telegram)
+    // СОХРАНЕНИЕ PDF - РАБОТАЕТ ВЕЗДЕ (ПК, мобильный, Telegram)
     const printPdfBtn = document.getElementById('printPdfBtn');
     if (printPdfBtn) {
         printPdfBtn.addEventListener('click', function() {
@@ -903,73 +905,54 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Подготовка PDF...';
             btn.disabled = true;
             
-            // Проверяем окружение (Telegram или обычный браузер)
-            const isTelegram = window.Telegram && window.Telegram.WebApp;
+            // Проверяем: ПК браузер или мобильное устройство?
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isDesktopChrome = !isMobile && /Chrome/.test(navigator.userAgent);
             
-            if (!isTelegram) {
-                // В ОБЫЧНОМ БРАУЗЕРЕ - используем встроенный print (высокое качество, как в Windows)
+            if (isDesktopChrome) {
+                // НА ДЕСКТОПЕ (Chrome, Edge) - используем обычный print (как Windows)
                 setTimeout(() => {
                     window.print();
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }, 300);
             } else {
-                // В TELEGRAM - отправляем на сервер для генерации PDF
-                const htmlContent = document.querySelector('.results-page').innerHTML;
+                // НА МОБИЛЬНОМ ИЛИ ДРУГОМ БРАУЗЕРЕ - используем html2pdf с максимальным качеством
+                const element = document.querySelector('.results-page');
                 
-                fetch('/save-pdf', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                // 🔥 МАКСИМАЛЬНОЕ КАЧЕСТВО - как Windows print
+                const opt = {
+                    margin: [10, 10, 10, 10],  // Отступы в мм
+                    filename: 'material_report_' + new Date().getTime() + '.pdf',
+                    image: { 
+                        type: 'png',  // PNG вместо JPEG для лучшего качества
+                        quality: 1.0  // Максимальное качество
                     },
-                    body: JSON.stringify({
-                        html: htmlContent
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    } else {
-                        throw new Error('Ошибка при сохранении PDF');
+                    html2canvas: { 
+                        scale: 3.5,  // Очень высокое разрешение (как в print)
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#0b1a2f'  // Фон как на странице
+                    },
+                    jsPDF: { 
+                        orientation: 'portrait', 
+                        unit: 'mm', 
+                        format: 'a4',
+                        compress: false  // Без сжатия для максимального качества
                     }
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'material_report_' + new Date().getTime() + '.pdf';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    a.remove();
-                    
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    
-                    // Fallback: если сервер не поддерживает, используем html2pdf
-                    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Использую альтернативный метод...';
-                    
-                    const element = document.querySelector('.results-page');
-                    const opt = {
-                        margin: 10,
-                        filename: 'material_report_' + new Date().getTime() + '.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2 },
-                        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-                    };
-                    
-                    html2pdf().set(opt).from(element).save().then(() => {
+                };
+                
+                html2pdf().set(opt).from(element).save()
+                    .then(() => {
                         btn.innerHTML = originalText;
                         btn.disabled = false;
-                    }).catch(() => {
+                    })
+                    .catch(error => {
+                        console.error('Ошибка PDF:', error);
                         btn.innerHTML = originalText;
                         btn.disabled = false;
-                        alert('Ошибка при создании PDF. Попробуйте позже.');
+                        alert('Ошибка при создании PDF. Попробуй ещё раз.');
                     });
-                });
             }
         });
     }
