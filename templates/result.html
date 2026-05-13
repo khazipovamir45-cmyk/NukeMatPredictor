@@ -478,14 +478,19 @@
             .recalc-btn {
                 display: none !important;
             }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
             body {
-                background: white;
+                background: white !important;
                 padding: 0;
                 margin: 0;
             }
             .results-page {
                 max-width: 100%;
-                background: white;
+                background: white !important;
                 box-shadow: none;
                 border: none;
                 margin: 0;
@@ -494,65 +499,114 @@
             .results-content {
                 padding: 15mm !important;
                 width: 100%;
+                background: white !important;
+            }
+            .results-header {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            h2 {
+                color: #000 !important;
+                page-break-after: avoid;
+                font-size: 28px;
+                margin-bottom: 15px;
             }
             .params-badge {
-                background: #f5f5f5 !important;
-                color: #333 !important;
-                border: 1px solid #ddd !important;
+                background: #f0f0f0 !important;
+                color: #000 !important;
+                border: 2px solid #1e6df2 !important;
                 backdrop-filter: none;
                 break-inside: avoid;
+                padding: 12px 20px;
+                border-radius: 10px;
+            }
+            .params-badge-item {
+                color: #000 !important;
+                font-weight: 500;
             }
             .params-badge-item i {
                 color: #1e6df2 !important;
             }
-            h2 {
-                color: white !important;
-                page-break-after: avoid;
+            .params-badge-separator {
+                color: #999 !important;
             }
             .table-container {
-                background: #112c48 !important;
-                border: 1px solid #265177 !important;
+                background: white !important;
+                border: 2px solid #333 !important;
                 break-inside: avoid;
-                padding: 20px;
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 0;
             }
             .materials-table {
                 width: 100%;
                 border-collapse: collapse;
             }
             .materials-table th {
-                background: #0a1f33 !important;
-                color: #7bc9ff !important;
-                border-bottom: 2px solid #265177;
+                background: #1e6df2 !important;
+                color: white !important;
+                font-weight: bold;
+                border-bottom: 2px solid #1e6df2;
+                padding: 12px;
+                text-align: left;
             }
             .materials-table td {
-                color: white !important;
-                border-bottom: 1px solid #265177;
-                background: #0a1f33 !important;
+                color: #000 !important;
+                border-bottom: 1px solid #ccc;
+                background: white !important;
+                padding: 12px;
             }
             .materials-table tbody tr {
-                background: #0a1f33 !important;
+                background: white !important;
+            }
+            .materials-table tbody tr:nth-child(even) {
+                background: #f9f9f9 !important;
+            }
+            .status-best {
+                color: #007500 !important;
+                font-weight: bold;
+            }
+            .status-good {
+                color: #cc6600 !important;
+                font-weight: bold;
+            }
+            .status-warning {
+                color: #cc0000 !important;
+                font-weight: bold;
             }
             .graphs-section {
                 break-inside: avoid;
+                margin-top: 20px;
             }
             .graph-container {
-                background: #112c48 !important;
-                border: 1px solid #265177 !important;
+                background: white !important;
+                border: 2px solid #333 !important;
                 break-inside: avoid;
                 page-break-inside: avoid;
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 0;
             }
             .graph-title {
-                color: white !important;
+                color: #000 !important;
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .graph-title i {
+                color: #1e6df2 !important;
             }
             .graph-frame-wrapper {
-                background: #0a1f33 !important;
+                background: white !important;
+                border: 1px solid #ccc !important;
+                border-radius: 0;
             }
             .js-plotly-plot {
                 max-width: 100%;
                 height: auto !important;
             }
-            .table-container, .graph-container, .params-badge, .results-header {
-                page-break-inside: avoid;
+            .field-error {
+                display: none !important;
             }
         }
     </style>
@@ -691,7 +745,6 @@
 </div>
 
 <script>
-    // Графики
     const tempGraphData = {{ temp_graph | safe }};
     const doseGraphData = {{ dose_graph|safe}};
     const materialName = "{{ optimal_material_name }}";
@@ -738,7 +791,6 @@
     
     renderGraphs();
 
-    // ============ ПОЛНАЯ ВАЛИДАЦИЯ ФОРМЫ С ОГРАНИЧЕНИЯМИ ============
     (function() {
         const form = document.getElementById('recalcForm');
         const inputs = form.querySelectorAll('.form-field input');
@@ -782,13 +834,11 @@
         function validateField(input, fieldName) {
             const value = input.value;
             
-            // Пустое поле
             if (value.trim() === '') {
                 showError(input, 'Заполните поле');
                 return false;
             }
             
-            // Проверка на число
             if (!isValidNumber(value)) {
                 const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
                 showError(input, `"${displayValue}" — не число`);
@@ -797,7 +847,6 @@
             
             const num = parseFloat(value);
             
-            // ============ ТЕМПЕРАТУРА ============
             if (fieldName === 'Температура') {
                 if (num < -273.15) {
                     showError(input, 'Температура не может быть ниже -273.15°C');
@@ -811,7 +860,6 @@
                 return true;
             }
             
-            // ============ ДОЗА ОБЛУЧЕНИЯ ============
             if (fieldName === 'Доза облучения') {
                 if (num < 0) {
                     showError(input, 'Доза облучения не может быть отрицательной');
@@ -825,7 +873,6 @@
                 return true;
             }
             
-            // ============ МИН. ПРОЧНОСТЬ ============
             if (fieldName === 'Мин прочность') {
                 if (num <= 0) {
                     showError(input, 'Прочность должна быть больше 0 МПа');
@@ -839,7 +886,6 @@
                 return true;
             }
             
-            // ============ ТЕПЛОПРОВОДНОСТЬ ============
             if (fieldName === 'Теплопроводность') {
                 if (num <= 0) {
                     showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
@@ -853,7 +899,6 @@
                 return true;
             }
             
-            // ============ ТЕПЛОЁМКОСТЬ ============
             if (fieldName === 'Теплоёмкость') {
                 if (num <= 0) {
                     showError(input, 'Теплоёмкость должна быть больше 0 Дж/(кг·К)');
@@ -896,7 +941,6 @@
         });
     })();
 
-    // СОХРАНЕНИЕ PDF - РАБОТАЕТ ВЕЗДЕ (ПК, мобильный, Telegram)
     const printPdfBtn = document.getElementById('printPdfBtn');
     if (printPdfBtn) {
         printPdfBtn.addEventListener('click', function() {
@@ -905,40 +949,36 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Подготовка PDF...';
             btn.disabled = true;
             
-            // Проверяем: ПК браузер или мобильное устройство?
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isDesktopChrome = !isMobile && /Chrome/.test(navigator.userAgent);
             
             if (isDesktopChrome) {
-                // НА ДЕСКТОПЕ (Chrome, Edge) - используем обычный print (как Windows)
                 setTimeout(() => {
                     window.print();
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }, 300);
             } else {
-                // НА МОБИЛЬНОМ ИЛИ ДРУГОМ БРАУЗЕРЕ - используем html2pdf с максимальным качеством
                 const element = document.querySelector('.results-page');
                 
-                // 🔥 МАКСИМАЛЬНОЕ КАЧЕСТВО - как Windows print
                 const opt = {
-                    margin: [10, 10, 10, 10],  // Отступы в мм
+                    margin: [10, 10, 10, 10],
                     filename: 'material_report_' + new Date().getTime() + '.pdf',
                     image: { 
-                        type: 'png',  // PNG вместо JPEG для лучшего качества
-                        quality: 1.0  // Максимальное качество
+                        type: 'png',
+                        quality: 1.0
                     },
                     html2canvas: { 
-                        scale: 3.5,  // Очень высокое разрешение (как в print)
+                        scale: 4,
                         useCORS: true,
                         logging: false,
-                        backgroundColor: '#0b1a2f'  // Фон как на странице
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { 
                         orientation: 'portrait', 
                         unit: 'mm', 
                         format: 'a4',
-                        compress: false  // Без сжатия для максимального качества
+                        compress: false
                     }
                 };
                 
