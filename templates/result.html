@@ -894,7 +894,7 @@
         });
     })();
 
-    // ГЕНЕРАЦИЯ PDF ЧЕРЕЗ html2pdf
+    // СОХРАНЕНИЕ PDF - РАБОТАЕТ ВЕЗДЕ (браузер + Telegram)
     const printPdfBtn = document.getElementById('printPdfBtn');
     if (printPdfBtn) {
         printPdfBtn.addEventListener('click', function() {
@@ -903,25 +903,74 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Подготовка PDF...';
             btn.disabled = true;
             
-            // Элемент для экспорта
-            const element = document.querySelector('.results-page');
+            // Проверяем окружение (Telegram или обычный браузер)
+            const isTelegram = window.Telegram && window.Telegram.WebApp;
             
-            const opt = {
-                margin: 10,
-                filename: 'material_report_' + new Date().getTime() + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-            };
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }).catch(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                alert('Ошибка при создании PDF');
-            });
+            if (!isTelegram) {
+                // В ОБЫЧНОМ БРАУЗЕРЕ - используем встроенный print (высокое качество, как в Windows)
+                setTimeout(() => {
+                    window.print();
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 300);
+            } else {
+                // В TELEGRAM - отправляем на сервер для генерации PDF
+                const htmlContent = document.querySelector('.results-page').innerHTML;
+                
+                fetch('/save-pdf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        html: htmlContent
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Ошибка при сохранении PDF');
+                    }
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'material_report_' + new Date().getTime() + '.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                    
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    
+                    // Fallback: если сервер не поддерживает, используем html2pdf
+                    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Использую альтернативный метод...';
+                    
+                    const element = document.querySelector('.results-page');
+                    const opt = {
+                        margin: 10,
+                        filename: 'material_report_' + new Date().getTime() + '.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+                    };
+                    
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }).catch(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        alert('Ошибка при создании PDF. Попробуйте позже.');
+                    });
+                });
+            }
         });
     }
 </script>
