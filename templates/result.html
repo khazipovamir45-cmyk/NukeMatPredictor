@@ -736,18 +736,28 @@
     
     renderGraphs();
 
-    // ============ ПОЛНАЯ ВАЛИДАЦИЯ ФОРМЫ С ОГРАНИЧЕНИЯМИ ============
+    // ============ ВАЛИДАЦИЯ ФОРМЫ ПЕРЕСЧЁТА ============
     (function() {
         const form = document.getElementById('recalcForm');
         const inputs = form.querySelectorAll('.form-field input');
-        
+
+        // Лимиты по каждому полю — единый источник правды.
+        // Все нижние границы = 0 (значения не могут быть отрицательными).
+        const LIMITS = {
+            temperature:   { min: 0, max: 5000, label: 'Температура',     unit: '°C' },
+            dose:          { min: 0, max: 200,  label: 'Доза облучения',  unit: 'dpa' },
+            strength:      { min: 0, max: 2000, label: 'Прочность',       unit: 'МПа' },
+            thermal_cond:  { min: 0, max: 500,  label: 'Теплопроводность', unit: 'Вт/(м·К)' },
+            heat_capacity: { min: 0, max: 5000, label: 'Теплоёмкость',    unit: 'Дж/(кг·К)' }
+        };
+
         function removeError(input) {
             const field = input.closest('.form-field');
             const existingError = field.querySelector('.field-error');
             if (existingError) existingError.remove();
             input.classList.remove('error-input');
         }
-        
+
         function showError(input, message) {
             removeError(input);
             input.classList.add('error-input');
@@ -756,7 +766,7 @@
             errorDiv.textContent = message;
             input.closest('.form-field').appendChild(errorDiv);
         }
-        
+
         function isValidNumber(str) {
             if (str === null || str === undefined || str.trim() === '') return false;
             str = str.trim().replace(',', '.');
@@ -764,131 +774,69 @@
             const num = parseFloat(str);
             return !isNaN(num) && isFinite(num);
         }
-        
-        function getFieldName(input) {
-            const name = input.getAttribute('name');
-            switch(name) {
-                case 'temperature': return 'Температура';
-                case 'dose': return 'Доза облучения';
-                case 'strength': return 'Мин прочность';
-                case 'thermal_cond': return 'Теплопроводность';
-                case 'heat_capacity': return 'Теплоёмкость';
-                default: return name;
-            }
-        }
-        
-        function validateField(input, fieldName) {
+
+        function validateField(input) {
             const value = input.value;
-            
+            const name = input.getAttribute('name');
+            const limit = LIMITS[name];
+
             // Пустое поле
             if (value.trim() === '') {
                 showError(input, 'Заполните поле');
                 return false;
             }
-            
+
             // Проверка на число
             if (!isValidNumber(value)) {
                 const displayValue = value.length > 15 ? value.substring(0, 15) + '...' : value;
                 showError(input, `"${displayValue}" — не число`);
                 return false;
             }
-            
+
+            // Если поле не описано в LIMITS — нет числовых ограничений
+            if (!limit) {
+                removeError(input);
+                return true;
+            }
+
             const num = parseFloat(value);
-            
-            // ============ ТЕМПЕРАТУРА ============
-            if (fieldName === 'Температура') {
-                if (num < -273.15) {
-                    showError(input, 'Температура не может быть ниже -273.15°C');
-                    return false;
-                }
-                if (num > 5000) {
-                    showError(input, 'Температура не может превышать 5000°C');
-                    return false;
-                }
-                removeError(input);
-                return true;
+
+            // Нижняя граница — все параметры должны быть >= 0
+            if (num < limit.min) {
+                showError(input, `${limit.label} не может быть отрицательной`);
+                return false;
             }
-            
-            // ============ ДОЗА ОБЛУЧЕНИЯ ============
-            if (fieldName === 'Доза облучения') {
-                if (num < 0) {
-                    showError(input, 'Доза облучения не может быть отрицательной');
-                    return false;
-                }
-                if (num > 200) {
-                    showError(input, 'Доза облучения не может превышать 200 dpa');
-                    return false;
-                }
-                removeError(input);
-                return true;
+
+            // Верхняя граница
+            if (num > limit.max) {
+                showError(input, `${limit.label} не может превышать ${limit.max} ${limit.unit}`);
+                return false;
             }
-            
-            // ============ МИН. ПРОЧНОСТЬ ============
-            if (fieldName === 'Мин прочность') {
-                if (num <= 0) {
-                    showError(input, 'Прочность должна быть больше 0 МПа');
-                    return false;
-                }
-                if (num > 2000) {
-                    showError(input, 'Прочность не может превышать 2000 МПа');
-                    return false;
-                }
-                removeError(input);
-                return true;
-            }
-            
-            // ============ ТЕПЛОПРОВОДНОСТЬ ============
-            if (fieldName === 'Теплопроводность') {
-                if (num <= 0) {
-                    showError(input, 'Теплопроводность должна быть больше 0 Вт/(м·К)');
-                    return false;
-                }
-                if (num > 500) {
-                    showError(input, 'Теплопроводность не может превышать 500 Вт/(м·К)');
-                    return false;
-                }
-                removeError(input);
-                return true;
-            }
-            
-            // ============ ТЕПЛОЁМКОСТЬ ============
-            if (fieldName === 'Теплоёмкость') {
-                if (num <= 0) {
-                    showError(input, 'Теплоёмкость должна быть больше 0 Дж/(кг·К)');
-                    return false;
-                }
-                if (num > 5000) {
-                    showError(input, 'Теплоёмкость не может превышать 5000 Дж/(кг·К)');
-                    return false;
-                }
-                removeError(input);
-                return true;
-            }
-            
+
             removeError(input);
             return true;
         }
-        
+
         inputs.forEach(input => {
-            input.addEventListener('input', function() { 
-                validateField(this, getFieldName(this)); 
+            input.addEventListener('input', function() {
+                validateField(this);
             });
-            input.addEventListener('blur', function() { 
-                validateField(this, getFieldName(this)); 
+            input.addEventListener('blur', function() {
+                validateField(this);
             });
         });
-        
+
         form.addEventListener('submit', function(e) {
             let allValid = true;
-            inputs.forEach(input => { 
-                if (!validateField(input, getFieldName(input))) allValid = false; 
+            inputs.forEach(input => {
+                if (!validateField(input)) allValid = false;
             });
             if (!allValid) {
                 e.preventDefault();
                 const firstError = document.querySelector('.error-input');
-                if (firstError) { 
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-                    firstError.focus(); 
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
                 }
             }
         });
