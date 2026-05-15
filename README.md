@@ -69,9 +69,7 @@ NukeMatPredictor/
 │   └── result.html           # Страница с результатами
 ├── static/
 │   ├── style.css             # Стили для всех страниц
-│   ├── chart.js              # Скрипт для построения графика
-│   ├── graph_strength_dose.html        # Тестовый график доза→прочность
-│   └── graph_strength_temperature.html # Тестовый график температура→прочность
+│   
 └── docs/
     ├── user_stories.md
     ├── functional_requirements.md
@@ -92,7 +90,7 @@ NukeMatPredictor/
 | Категория | Инструменты |
 |---|---|
 | Backend | Python, Flask |
-| Frontend | HTML5, CSS3, Jinja2 |
+| Frontend | HTML5, CSS3, Jinja2, Java Script |
 | База данных | SQLite3, CSV |
 | Графики | style.css, result.html |
 | Управление версиями | Git, GitHub |
