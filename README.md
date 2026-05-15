@@ -63,6 +63,7 @@ NukeMatPredictor/
 ├── features.npy              # Нормализованные признаки (numpy)
 ├── NukeMatPredictor.pptx     # Презентация проекта
 ├── .gitignore
+├── Procfile файл для работы gunicorn
 ├── templates/
 │   ├── index.html            # Главная страница (лендинг)
 │   ├── form.html             # Страница с формой ввода
@@ -80,7 +81,11 @@ NukeMatPredictor/
     ├── conceptual_model.md
     ├── er_diagram.jpg
     ├── testing_checklist.md
-    └── screenshots.png
+    ├── screenshots.docx
+    ├── data_model.png
+    ├── data_model.md
+    └── usecase.drawio
+    
 ```
 
 ---
@@ -123,7 +128,7 @@ NukeMatPredictor/
 | [`testing_checklist.md`](docs/testing_checklist.md) | Чеклист тестирования |
 | [`user_stories.md`](docs/user_stories.md) | Пользовательские истории |
 | [`mockup.png`](docs/mockup.png) | Мокапы страниц (дизайн до реализации) |
-| [`screenshots.png`](docs/screenshots.png) | Скриншоты готового сайта |
+| [`screenshots.docx`](docs/screenshots.docx) | Скриншоты готового сайта |
 | [`usecase.png`](docs/usecase.png) | Use-case диаграмма |
 
 ---
