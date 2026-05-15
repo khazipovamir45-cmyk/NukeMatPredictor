@@ -46,12 +46,7 @@ venv\Scripts\activate         # для Windows
 pip install -r requirements.txt
 ```
 
-**4. Запустить сайт:**
-```bash
-# (здесь допишу нужную команду)
-```
-
-**5. Открыть в браузере:** *(здесь тоже напишу ссылку на сайт)*
+**4. Открыть в браузере: https://nukematpredictor.onrender.com
 
 ---
 
