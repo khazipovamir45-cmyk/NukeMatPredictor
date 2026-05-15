@@ -25,15 +25,6 @@
         <mxCell id="AvkdiAsReh0jpHn1rncZ-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Построить график зависимтости материалов от условий вн.среды" vertex="1">
           <mxGeometry height="70" width="140" x="440" y="180" as="geometry" />
         </mxCell>
-        <mxCell id="AvkdiAsReh0jpHn1rncZ-6" edge="1" parent="1" source="AvkdiAsReh0jpHn1rncZ-2" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0.45;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" target="AvkdiAsReh0jpHn1rncZ-7" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" width="160" as="geometry">
-            <mxPoint x="330" y="430" as="sourcePoint" />
-            <mxPoint x="360" y="430" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="AvkdiAsReh0jpHn1rncZ-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Рекомендации от системы" vertex="1">
-          <mxGeometry height="70" width="140" x="350" y="710" as="geometry" />
-        </mxCell>
         <mxCell id="AvkdiAsReh0jpHn1rncZ-8" edge="1" parent="1" source="AvkdiAsReh0jpHn1rncZ-2" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0.271;exitY=0.979;exitDx=0;exitDy=0;exitPerimeter=0;" target="AvkdiAsReh0jpHn1rncZ-9" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
           <mxGeometry relative="1" width="160" as="geometry">
             <mxPoint x="330" y="430" as="sourcePoint" />
